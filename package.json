@@ -1,0 +1,8 @@
+{
+  "name": "shipframe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node src/server.js", "dev": "node --watch src/server.js", "test": "node --test"},
+  "dependencies": {"archiver": "^8.0.0", "dotenv": "^17.2.3", "express": "^5.1.0", "express-session": "^1.18.2", "sharp": "^0.34.5"}
+}
