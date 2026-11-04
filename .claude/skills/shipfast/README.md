@@ -19,7 +19,7 @@ What the agent does, with local scripts only (no external image API or key):
 - Turns real-device captures into store images:
   - Google Play: phone screenshots 1080×1920, feature graphic 1024×500
   - App Store: iPhone screenshots (default 1320×2868), Product Page Header 3840×1646 (21:9), Search Results 3840×2560 (3:2), universal 5244×2950 (16:9)
-- Drafts listing text within each store's limits and a privacy policy from code evidence.
+- Drafts listing text within each store's limits and a privacy policy from code evidence, then publishes the policy, support and account-deletion pages on Firebase Hosting.
 - Fills data safety / App Privacy and other declarations from code and runtime evidence, then uploads, saves and submits within the scope you give it, tracking every item in `.shipfast/`.
 
 See [SKILL.md](SKILL.md) for the procedure.
@@ -47,7 +47,7 @@ npm install --prefix .claude/skills/shipfast          # project install
 npm install --prefix ~/.claude/skills/shipfast        # global install (-g)
 ```
 
-Requirements: Node.js 20+. Your app's own toolchain (Flutter, Android SDK, Xcode, EAS, ...) for builds. `adb` for Android captures; a real iPhone with TestFlight for iOS captures. Non-Latin captions need a matching font installed (for example Noto Sans CJK).
+Requirements: Node.js 20+. The [Firebase CLI](https://firebase.google.com/docs/cli), signed in with `firebase login`, to publish the privacy policy. Your app's own toolchain (Flutter, Android SDK, Xcode, EAS, ...) for builds. `adb` for Android captures; a real iPhone with TestFlight for iOS captures. Non-Latin captions need a matching font installed (for example Noto Sans CJK).
 
 ## Update and remove
 
@@ -82,6 +82,7 @@ Start from the config examples in [templates/](templates/). Inputs must be revie
 | `scripts/render-app-icons.mjs` | Icon comparison sheet and iOS/Play icons from SVG |
 | `scripts/render-play-assets.mjs` | Google Play screenshots and feature graphic |
 | `scripts/render-app-store-assets.mjs` | iPhone screenshots and App Store Header/Search/universal images |
+| `scripts/publish-policy.mjs` | Builds the privacy, support and account-deletion pages and deploys them to Firebase Hosting |
 | `templates/` | Renderer configs and secret-free release state templates |
 
 The scripts never upload or submit anything. Store uploads, saves and submission are done by the agent in the store console within the scope you approve, and each is verified separately.

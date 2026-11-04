@@ -321,7 +321,7 @@ def store_images(skin):
 
 def privacy_policy(skin):
     d = Diagram('privacy-policy', 'How the privacy policy is made',
-                'Flowchart of the privacy policy: code, runtime traffic and backend behavior feed one evidence table, which produces the policy draft; confirmed facts go to a public URL, unknown ones go back to you, and the same table fills the data safety answers in Play Console.',
+                'Flowchart of the privacy policy: code, runtime traffic and backend behavior feed one evidence table, which produces the policy draft; confirmed facts are deployed to Firebase Hosting, unknown ones go back to you, and the same table fills the data safety answers in Play Console.',
                 'Flowchart', 1280, 680, skin, shift=96)
     d.arrow([(240, 188), (272, 188), (272, 272), (320, 272)])
     d.arrow([(240, 292), (320, 292)])
@@ -338,7 +338,7 @@ def privacy_policy(skin):
     d.box(320, 252, 200, 80, 'Evidence table', 'data · purpose · who', kind='focal')
     d.box(560, 252, 200, 80, 'Policy draft', 'PRIVACY.<lang>.md')
     d.diamond(800, 236, 160, 112, ['Facts', 'confirmed?'])
-    d.box(1000, 252, 200, 80, 'Public URL', 'your site · Pages')
+    d.box(1000, 252, 200, 80, 'Firebase Hosting', '<app>-legal.web.app')
     d.box(800, 440, 160, 64, 'Ask you', 'never guessed', kind='optional')
     d.box(1000, 520, 200, 80, 'Play Console', 'URL + data safety')
     d.legend(636, [('input', 'Evidence'), ('backend', 'Step'), ('optional', 'Blocked'), ('focal', 'Single source')])

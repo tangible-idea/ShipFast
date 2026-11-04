@@ -1,0 +1,15 @@
+{
+  "appName": "Example App",
+  "operator": "CONFIRM_WITH_USER",
+  "email": "CONFIRM_WITH_USER",
+  "effectiveDate": "2026-11-04",
+  "locale": "en",
+  "projectId": "example-app-prod",
+  "siteId": "example-app-legal",
+  "outDir": "./policy-site",
+  "pages": {
+    "privacy": "./privacy/PRIVACY.en.md",
+    "support": "./privacy/SUPPORT.en.md",
+    "deleteAccount": "./privacy/DELETE-ACCOUNT.en.md"
+  }
+}

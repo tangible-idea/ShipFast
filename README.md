@@ -136,7 +136,9 @@ Every image starts from your release build on a real phone. You confirm each cap
   <img src="docs/assets/privacy-policy.png" alt="Privacy policy flow: code, runtime traffic and backend feed one evidence table; the draft goes to a public URL once facts are confirmed, otherwise back to you; the same table fills data safety" width="900">
 </picture>
 
-The policy comes from what the app actually does, not from a template. The agent records each data type in an evidence table: where it was found, the purpose, who receives it and how long it is kept. The draft and Play's Data safety form (or App Store App Privacy) are filled from that one table, so they always match. Facts it cannot confirm are put to you; it never guesses them. The draft is not legal advice. You publish it at a public URL.
+The policy comes from what the app actually does, not from a template. The agent records each data type in an evidence table: where it was found, the purpose, who receives it and how long it is kept. The draft and Play's Data safety form (or App Store App Privacy) are filled from that one table, so they always match. Facts it cannot confirm are put to you; it never guesses them. The draft is not legal advice.
+
+ShipFast asks you to sign in with `firebase login` (it reads only the account email, never the tokens). It then proposes the contact email, operator name and Firebase project, and after you confirm them once it deploys the policy, support and account-deletion pages to a dedicated site, for example `https://<app>-legal.web.app/privacy/`. It fetches each live URL to check it before entering it in the store console. Your app's own Firebase Hosting site is never touched.
 
 ---
 
@@ -176,7 +178,7 @@ Each build, image, text field and declaration moves through these states in `.sh
 | [`references/google-play.md`](.claude/skills/shipfast/references/google-play.md) | Play Console procedure, closed-test gate, observed failure modes |
 | [`references/app-store.md`](.claude/skills/shipfast/references/app-store.md) | App Store Connect procedure, Header/Search Results specs |
 | [`references/store-listing.md`](.claude/skills/shipfast/references/store-listing.md) | Text limits, required URLs, privacy policy drafting |
-| [`scripts/`](.claude/skills/shipfast/scripts/) | Icon, Google Play and App Store renderers |
+| [`scripts/`](.claude/skills/shipfast/scripts/) | Icon, Google Play and App Store renderers; `publish-policy.mjs` for Firebase Hosting |
 | [`templates/`](.claude/skills/shipfast/templates/) | Renderer configs and release state templates |
 
 </details>

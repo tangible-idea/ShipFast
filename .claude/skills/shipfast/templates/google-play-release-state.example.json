@@ -77,5 +77,20 @@
     "requiredDays": 14,
     "productionAccessAppliedAt": null,
     "productionAccessGrantedAt": null
+  },
+  "policySite": {
+    "status": "unknown",
+    "firebaseAccount": null,
+    "projectId": null,
+    "siteId": null,
+    "operator": null,
+    "contactEmail": null,
+    "urls": {
+      "privacy": null,
+      "support": null,
+      "deleteAccount": null
+    },
+    "deployedAt": null,
+    "liveVerifiedAt": null
   }
 }

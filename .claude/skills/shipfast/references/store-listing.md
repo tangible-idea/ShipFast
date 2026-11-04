@@ -46,4 +46,4 @@ Build the draft from evidence, not from a generic template:
 | Children | Target age declaration |
 | Changes and date | Effective date |
 
-Write it in the listing's language(s) as Markdown in `.shipfast/privacy/`. Tell the user it is a draft, not legal advice, and that it must be published at a public URL (their website, GitHub Pages, Notion public page, etc.) before submission. The same evidence feeds Play data safety and App Store App Privacy, so keep them consistent.
+Write it in the listing's language(s) as Markdown in `.shipfast/privacy/`, together with short `SUPPORT` and `DELETE-ACCOUNT` pages. Tell the user it is a draft, not legal advice. ShipFast publishes all three on a dedicated Firebase Hosting site (`<app-slug>-legal.web.app`, SKILL.md section 5a). If the user already hosts policies elsewhere, record that URL instead and skip the deploy. The same evidence feeds Play data safety and App Store App Privacy, so keep them consistent.

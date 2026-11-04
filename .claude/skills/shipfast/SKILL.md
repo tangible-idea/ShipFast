@@ -1,6 +1,6 @@
 ---
 name: shipfast
-description: Ship any mobile app to Google Play and/or the Apple App Store fast - for Flutter, React Native, Expo, native Android (Gradle) or native iOS (Xcode) projects. Detects the app and platform, verifies signed builds, prepares the review account, designs the app icon, captures real-device screenshots, renders all store images (Play phone screenshots and feature graphic; iPhone screenshots and App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 images), drafts listing text and the privacy policy, fills data/privacy declarations from code evidence, and tracks Play Console / App Store Connect state through review. Use for requests like "/shipfast launch Android app on Play Store", "/shipfast ios", "publish my app", "submit for review", "make store screenshots", "make an app icon", "Header and Search Results images", or "resume the release".
+description: Ship any mobile app to Google Play and/or the Apple App Store fast - for Flutter, React Native, Expo, native Android (Gradle) or native iOS (Xcode) projects. Detects the app and platform, verifies signed builds, prepares the review account, designs the app icon, captures real-device screenshots, renders all store images (Play phone screenshots and feature graphic; iPhone screenshots and App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 images), drafts listing text and the privacy policy and publishes it on Firebase Hosting, fills data/privacy declarations from code evidence, and tracks Play Console / App Store Connect state through review. Use for requests like "/shipfast launch Android app on Play Store", "/shipfast ios", "publish my app", "submit for review", "make store screenshots", "make an app icon", "Header and Search Results images", or "resume the release".
 argument-hint: "[launch|resume|status|icon|screenshots|images|listing|privacy] [android|ios|both] [app path or name]"
 ---
 
@@ -37,7 +37,7 @@ Run the steps in order, skipping ones already verified in the state file. Each s
 4. **Review account** - if the app needs sign-in, create a working account, change any initial password, verify sign-in on the release build.
 5. **App icon** - section 4.
 6. **Screenshots and store images** - section 5.
-7. **Listing text and privacy policy** - [references/store-listing.md](references/store-listing.md).
+7. **Listing text, privacy policy and its public site** - [references/store-listing.md](references/store-listing.md). Section 5a covers publishing to Firebase Hosting.
 8. **Declarations** - data safety / App Privacy, content rating, target audience, ads, export compliance, from code and runtime evidence.
 9. **Upload, fill, save, submit** - within the scope in section 6, re-reading after every save.
 10. **Report** - section 7.
@@ -77,6 +77,27 @@ Start from [templates/real-device-assets.example.json](templates/real-device-ass
 After rendering, open every output and check fonts, overflow, clipped UI and sensitive content; in `previews/universal.png` the title and key screens must sit inside the red (header) and green (search) areas. A finished render is not a finished upload.
 
 `<skill>` is the folder containing this SKILL.md. The renderers need `sharp`: if `node -e "import('sharp')"` fails in `<skill>`, run `npm install --prefix <skill>` once.
+
+## 5a. Publish the privacy policy (Firebase Hosting, required)
+
+The stores need public URLs for the privacy policy, support and account deletion. ShipFast publishes them on a dedicated Firebase Hosting site.
+
+1. **Require a Firebase login.** Run `node <skill>/scripts/publish-policy.mjs --whoami`. If it fails, ask the user to run `! firebase login` themselves. Never read, print or store Firebase tokens; the script only returns the email.
+2. **Propose the identity, then confirm it once.** Show one summary and let the user edit it:
+   - Contact email: the Firebase account email by default. Offer an alias, because it will be public. Never a noreply address.
+   - Operator name: the developer name on the Play/App Store account if known, else `git config user.name`. It must match the store developer account (company or person).
+   - Firebase project: the app's own project (`project_id` in `google-services.json`, `PROJECT_ID` in `GoogleService-Info.plist`, `projectId` in `firebase_options.dart` or `.firebaserc`). Otherwise pick from `firebase projects:list`. Creating a new project is the user's decision.
+   - Site: `<app-slug>-legal` → `https://<app-slug>-legal.web.app/privacy/`, `/support/`, `/delete-account/`.
+3. **Write `.shipfast/policy-site.json`** from [templates/policy-site.example.json](templates/policy-site.example.json). Run without `--deploy` first; it builds `.shipfast/policy-site/public/` so you can open the pages locally.
+4. **Deploy and verify.** Run `--deploy`. The script creates the site if it is missing and deploys only that site, so the app's own hosting is never touched. It then fetches every URL and checks for the app name, contact email and effective date. Record the URLs in the state file's `policySite`, then enter them in the store console and re-read them.
+
+```sh
+node <skill>/scripts/publish-policy.mjs --whoami
+node <skill>/scripts/publish-policy.mjs --config .shipfast/policy-site.json            # build + preview
+node <skill>/scripts/publish-policy.mjs --config .shipfast/policy-site.json --deploy   # publish + live check
+```
+
+Publishing makes the operator name and email public. Get the summary confirmed before the first deploy, even inside a launch request. Later redeploys with only a new effective date or edited text continue within the launch scope.
 
 ## 6. Scope and safety
 
