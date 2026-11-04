@@ -15,11 +15,7 @@
 
 <br><br>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/launch-flow-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/launch-flow.gif">
-  <img src="docs/assets/launch-flow.gif" alt="The /shipfast launch flow step by step: request, detect the app, signed release, closed test, real-device run, store listing kit, Play Console save and re-read, report" width="900">
-</picture>
+<img src="docs/assets/terminal-launch.gif" alt="A terminal types /shipfast launch Android app on Play Store, then prints each step: detect, signed build, real-device run, closed test, icon, screenshots, feature graphic, privacy policy, console save, review, and finally Launched on Google Play" width="900">
 
 </div>
 
@@ -92,7 +88,12 @@ Run `npm install --prefix <skill folder>` again after an update if `package.json
 
 ## How it works
 
-The diagram at the top is the whole run. Tags show who acts at each step: `AUTO` steps run without stopping, and `ASKS YOU` steps wait for your choice. Nothing counts as done until it is saved in the console and read back.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/launch-flow-dark.gif">
+  <img src="docs/assets/launch-flow.gif" alt="The /shipfast launch flow step by step: request, detect the app, signed release, closed test, real-device run, store listing kit, Play Console save and re-read, report" width="900">
+</picture>
+
+This is the whole run. Tags show who acts at each step: `AUTO` steps run without stopping, and `ASKS YOU` steps wait for your choice. Nothing counts as done until it is saved in the console and read back.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/who-does-what-dark.png">

@@ -59,6 +59,40 @@ def gif(page, html: pathlib.Path, out: pathlib.Path):
                         '-loop', '0', str(out)], cwd=tmp, check=True)
 
 
+def encode(frames, durations, out: pathlib.Path, tmp: pathlib.Path, colors=96):
+    listing = []
+    for i, (frame, duration) in enumerate(zip(frames, durations)):
+        frame.save(tmp / f'f{i:03d}.png')
+        listing += [f"file 'f{i:03d}.png'", f'duration {duration}']
+    listing.append(f"file 'f{len(frames) - 1:03d}.png'")
+    (tmp / 'frames.txt').write_text('\n'.join(listing) + '\n')
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', 'frames.txt',
+                    '-vf', f'scale=1280:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors={colors}:stats_mode=full[p];[b][p]paletteuse=dither=none',
+                    '-loop', '0', str(out)], cwd=tmp, check=True)
+
+
+def terminal_gif(page, html: pathlib.Path, out: pathlib.Path):
+    """Type the command, then print one line per beat, then hold on the launch line."""
+    page.set_viewport_size({'width': 1280, 'height': 720})
+    page.goto(html.as_uri())
+    page.wait_for_load_state('networkidle')
+    page.evaluate('document.fonts.ready')
+    count = page.evaluate('window.frameCount')
+    plan = [(0, 0, True, 0.5)]
+    plan += [(c, 0, True, 0.07) for c in range(2, count['chars'] + 2, 2)]
+    plan += [(count['chars'], 0, True, 0.6)]
+    plan += [(count['chars'], n, False, 3.6 if n == count['lines'] else 0.42) for n in range(1, count['lines'] + 1)]
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = pathlib.Path(tmp)
+        frames, durations = [], []
+        for i, (chars, lines, cursor, hold) in enumerate(plan):
+            page.evaluate('([c, l, k]) => window.setFrame(c, l, k)', [min(chars, count['chars']), lines, cursor])
+            page.screenshot(path=str(tmp / f'shot-{i:03d}.png'))
+            frames.append(Image.open(tmp / f'shot-{i:03d}.png').convert('RGB'))
+            durations.append(hold)
+        encode(frames, durations, out, tmp, colors=64)
+
+
 def main():
     OUT.mkdir(exist_ok=True)
     channel = os.environ.get('PLAYWRIGHT_CHANNEL')
@@ -67,7 +101,10 @@ def main():
         sharp = browser.new_page(device_scale_factor=2, viewport={'width': 1440, 'height': 1000})
         plain = browser.new_page(device_scale_factor=1, viewport={'width': 1440, 'height': 1000})
         for html in sorted(HERE.glob('*.html')):
-            if html.stem.endswith('-animated'):
+            if html.stem == 'terminal-launch':
+                target = OUT / 'terminal-launch.gif'
+                terminal_gif(browser.new_page(viewport={'width': 1280, 'height': 720}), html, target)
+            elif html.stem.endswith('-animated'):
                 target = OUT / f'{html.stem.removesuffix("-animated")}.gif'
                 gif(plain, html, target)
             else:
