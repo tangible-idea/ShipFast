@@ -15,6 +15,16 @@ Detailed Google Play reference for the [shipfast skill](../SKILL.md). Built from
 
 ## 1. Align the target and existing state first
 
+**Console handshake (end of the start phase).** Ask the developer to sign in to Play Console with the developer account and say when it is done, or to paste the existing app's URL. URL shapes:
+
+| URL | Gives |
+| --- | --- |
+| `https://play.google.com/console/u/<n>/developer/<developerId>/app/<appId>/...` | developer ID and app ID (both numeric) |
+| `https://play.google.com/console/u/<n>/developer/<developerId>/...` | developer account only; find or create the app |
+| `https://play.google.com/store/apps/details?id=<package>` | public listing only; the app is already published, so still ask for the console sign-in |
+
+`<n>` is the browser's Google account index and changes between sessions, so store the developer and app IDs and rebuild the URL rather than trusting `/u/<n>/`. After opening it, read the package name on the app dashboard and compare it with the source `applicationId` before any change.
+
 The Google account index in Console URLs (`/u/<number>/`) can change between sign-in sessions. Confirm the developer and app identifiers and the real package name. Do not confuse the customer app with the admin app in a monorepo.
 
 Values to confirm when a record already exists:

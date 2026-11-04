@@ -10,7 +10,9 @@
     "appStoreConnectAppId": null,
     "supportsIpad": null,
     "countries": [],
-    "authorizationSummary": null
+    "authorizationSummary": null,
+    "appStoreConnectUrl": null,
+    "consoleSessionConfirmedAt": null
   },
   "artifact": {
     "status": "unknown",

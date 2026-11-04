@@ -11,7 +11,10 @@
     "closedTestRequired": null,
     "track": null,
     "countries": [],
-    "authorizationSummary": null
+    "authorizationSummary": null,
+    "developerId": null,
+    "consoleAppId": null,
+    "consoleSessionConfirmedAt": null
   },
   "artifact": {
     "status": "unknown",

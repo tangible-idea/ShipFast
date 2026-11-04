@@ -14,6 +14,8 @@ Detailed App Store reference for the [shipfast skill](../SKILL.md). It applies t
 
 ## 1. Confirm the target
 
+**Console handshake (end of the start phase).** Ask the developer to sign in to App Store Connect with the developer account (they complete any two-factor prompt themselves) and say when it is done, or to paste the existing app's URL, for example `https://appstoreconnect.apple.com/apps/<appleId>/distribution/...`. The numeric `<appleId>` identifies the app; the public `https://apps.apple.com/.../id<appleId>` link carries the same ID. Open the app, read its bundle ID under App Information, and compare it with the source before any change. With several teams, confirm the team name shown in the account menu.
+
 - Cross-check the App Store Connect app record's name, bundle ID and SKU against the app target's `PRODUCT_BUNDLE_IDENTIFIER` (see [frameworks.md](frameworks.md) for where each stack keeps it). Do not confuse it with an extension target's bundle ID.
 - Record the team (Team ID), existing version and build numbers, the version being prepared, release countries/regions, price, and iPad support (`TARGETED_DEVICE_FAMILY`). If the app supports iPad, iPad screenshots are also required.
 

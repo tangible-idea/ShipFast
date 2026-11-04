@@ -30,7 +30,7 @@ Ask your agent in plain words:
 - *"/shipfast icon"*: three SVG concepts on a masked comparison sheet, then iOS 1024px and Play 512px icons
 - *"/shipfast resume"*: continue from what was saved in `.shipfast/`
 
-The agent detects your stack (Flutter, Expo, React Native, Capacitor, native Android or iOS). Before anything that needs your decision, it states its plan, and it records every step in `.shipfast/` in your app. No external image API or key is needed.
+The agent detects your stack (Flutter, Expo, React Native, Capacitor, native Android or iOS). The last thing it asks before building is to sign in to Play Console / App Store Connect and say when you're done, or to paste the console URL of an app you already created. It never asks for your password. Before anything that needs your decision, it states its plan, and it records every step in `.shipfast/` in your app. No external image API or key is needed.
 
 ---
 

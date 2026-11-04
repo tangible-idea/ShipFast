@@ -25,13 +25,18 @@ Examples: `/shipfast launch Android app on Play Store` → launch, android. `/sh
 1. Detect the stack and app root with [references/frameworks.md](references/frameworks.md). In monorepos, list the candidate apps and confirm which one.
 2. Read the Android `applicationId` and/or iOS bundle ID, app name, version and build number from the source.
 3. State lives in `.shipfast/` at the app root. Add `.shipfast/` to the app's `.gitignore` before writing anything there. Copy [templates/google-play-release-state.example.json](templates/google-play-release-state.example.json) or [templates/app-store-release-state.example.json](templates/app-store-release-state.example.json) to `.shipfast/<platform>-state.json` if missing. Keep raw captures in `.shipfast/captures/` and secrets in `.shipfast/secrets/` (mode 600).
-4. If a store record already exists, re-read what is actually saved in the Console / App Store Connect before trusting local state.
+4. **Connect the store console. This is the last start step; ask it before building anything.** Pause and ask the developer for one of:
+   - **"I'm signed in"**: they have signed in to [Play Console](https://play.google.com/console) / [App Store Connect](https://appstoreconnect.apple.com) with the developer account in the browser you will use, and tell you so. You then find or create the app record there.
+   - **The existing app's console URL**, when the app was already created, for example `https://play.google.com/console/u/0/developer/<developerId>/app/<appId>/app-dashboard` or `https://appstoreconnect.apple.com/apps/<appleId>/distribution`.
+
+   Never ask for the Google or Apple password, and never type it yourself. The developer signs in, and you work in that signed-in session. From a URL, extract the IDs (Play: developer ID and app ID; App Store: Apple ID), open it, and confirm that the package name / bundle ID shown matches the source before going on. A mismatch is a stop: ask which app is meant. Record the URL and IDs in the state file (`target`). If no developer account exists yet, say so and stop at the accounts step (section 3, step 1); creating or paying for one is the developer's decision.
+5. If a store record already exists, re-read what is actually saved in the Console / App Store Connect before trusting local state.
 
 ## 3. Launch flow
 
 Run the steps in order, skipping ones already verified in the state file. Each step's details are in the platform reference: [references/google-play.md](references/google-play.md), [references/app-store.md](references/app-store.md).
 
-1. **Accounts and app record** - developer account type, app record, package/bundle ID. On Google Play, new personal accounts must pass a closed test before production; plan for it on day one.
+1. **Accounts and app record** - developer account type, app record, package/bundle ID, using the console session or URL from section 2, step 4. On Google Play, new personal accounts must pass a closed test before production; plan for it on day one.
 2. **Signed release build** - build with the project's real command, verify signing, record size and SHA-256.
 3. **Install and run the release build on a real device** - sign in and walk the main screens.
 4. **Review account** - if the app needs sign-in, create a working account, change any initial password, verify sign-in on the release build.
