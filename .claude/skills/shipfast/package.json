@@ -2,6 +2,7 @@
   "name": "shipfast-skill",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "Renderers for the shipfast agent skill.",
   "dependencies": {"sharp": "^0.34.5"}

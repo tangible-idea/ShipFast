@@ -8,6 +8,7 @@
 [![Google Play](https://img.shields.io/badge/Google%20Play-ready-555555?style=flat-square)](.claude/skills/shipfast/references/google-play.md)
 [![App Store](https://img.shields.io/badge/App%20Store-ready-555555?style=flat-square)](.claude/skills/shipfast/references/app-store.md)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-555555?style=flat-square)](.claude/skills/shipfast/package.json)
+[![MIT license](https://img.shields.io/badge/license-MIT-555555?style=flat-square)](LICENSE)
 
 [Install](#install) · [How it works](#how-it-works) · [Store images](#how-store-images-are-made) · [Privacy policy](#how-the-privacy-policy-is-made) · [Tracking](#every-item-is-tracked) · [Commands](#commands)
 
@@ -136,7 +137,7 @@ Every image starts from your release build on a real phone. You confirm each cap
 
 The policy comes from what the app actually does, not from a template. The agent records each data type in an evidence table: where it was found, the purpose, who receives it and how long it is kept. The draft and Play's Data safety form (or App Store App Privacy) are filled from that one table, so they always match. Facts it cannot confirm are put to you; it never guesses them. The draft is not legal advice.
 
-ShipFast asks you to sign in with `firebase login` (it reads only the account email, never the tokens). It then proposes the contact email, operator name and Firebase project, and after you confirm them once it deploys the policy, support and account-deletion pages to a dedicated site, for example `https://<app>-legal.web.app/privacy/`. It fetches each live URL to check it before entering it in the store console. Your app's own Firebase Hosting site is never touched.
+First, ShipFast scans your app for a privacy policy and a terms of use it already links, and checks that they load. It then asks about each one: use the URL it found, **generate it and auto-upload it to Firebase Hosting**, give your own URL, or (terms only) go without. Only if you pick auto-upload does it ask you to sign in with `firebase login`, and it reads only the account email, never the tokens. It proposes the contact email, operator name and Firebase project, and once you confirm them it deploys the pages to a dedicated site, for example `https://<app>-legal.web.app/privacy/` and `/terms/`. It fetches each live URL to check it before entering it in the store console. Your app's own Firebase Hosting site is never touched.
 
 ---
 
@@ -164,7 +165,7 @@ Each build, image, text field and declaration moves through these states in `.sh
 | `icon` | Design SVG concepts and render store icons |
 | `screenshots` / `images` | Capture and render store screenshots / all store graphics |
 | `listing` | Draft store text within each store's limits |
-| `privacy` | Build the evidence table and privacy policy draft |
+| `privacy` / `terms` | Check for existing pages, then use them or generate and auto-upload to Firebase Hosting |
 
 <details>
 <summary><b>What's inside the skill</b></summary>

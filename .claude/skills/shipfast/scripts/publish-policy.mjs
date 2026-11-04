@@ -1,17 +1,17 @@
-import {readFile, writeFile, mkdir, rm} from 'node:fs/promises';
+import {readFile, writeFile, mkdir, rm, readdir, stat} from 'node:fs/promises';
 import {dirname, resolve, join} from 'node:path';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {realpathSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 
-// Builds the public legal pages (privacy policy, support, account deletion) as a
-// static site and deploys it to a dedicated Firebase Hosting site, then checks
+// Finds existing legal URLs in an app (--scan), builds the public legal pages
+// (privacy policy, terms of use, support, account deletion) as a static site and deploys it to a dedicated Firebase Hosting site, then checks
 // the live URLs. Never touches the app's own Firebase Hosting sites.
 
 const run = promisify(execFile);
-const PAGES = {privacy: 'Privacy Policy', support: 'Support', deleteAccount: 'Delete your account'};
-const PATHS = {privacy: 'privacy', support: 'support', deleteAccount: 'delete-account'};
+const PAGES = {privacy: 'Privacy Policy', terms: 'Terms of Use', support: 'Support', deleteAccount: 'Delete your account'};
+const PATHS = {privacy: 'privacy', terms: 'terms', support: 'support', deleteAccount: 'delete-account'};
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -83,7 +83,7 @@ export async function loadConfig(path) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(config.email) || /noreply/i.test(config.email)) throw Error('email must be a real, reachable address (no noreply addresses).');
   if (!/^[a-z0-9][a-z0-9-]{4,28}[a-z0-9]$/.test(config.siteId)) throw Error('siteId must be 6–30 lowercase letters, digits or hyphens (it becomes <siteId>.web.app).');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(config.effectiveDate)) throw Error('effectiveDate must be YYYY-MM-DD.');
-  if (!config.pages?.privacy) throw Error('pages.privacy (a Markdown file) is required.');
+  if (!config.pages || !Object.keys(config.pages).length) throw Error('pages needs at least one Markdown file (privacy, terms, support, deleteAccount).');
   for (const key of Object.keys(config.pages)) if (!PAGES[key]) throw Error(`Unknown page "${key}". Use ${Object.keys(PAGES).join(', ')}.`);
   return {...config, base, outDir: resolve(base, config.outDir ?? 'policy-site')};
 }
@@ -138,7 +138,54 @@ export async function deploy(config, urls) {
   return {created: !exists, checks};
 }
 
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'build', '.dart_tool', 'Pods', '.gradle', '.idea', 'DerivedData', '.expo', 'dist', '.next', '.shipfast']);
+const TEXT_FILE = /\.(dart|kt|kts|java|swift|m|ts|tsx|js|jsx|json|ya?ml|xml|plist|md|txt|html|strings|arb|properties|gradle)$/i;
+const KIND = [['terms', /terms|tos\b|eula|conditions|이용약관|利用規約/i], ['privacy', /privacy|개인정보|プライバシー/i]];
+
+// Legal URLs already referenced by the app: in-app links, fastlane metadata, configs, docs.
+export async function scan(root, {check = true} = {}) {
+  const found = {privacy: new Map(), terms: new Map()};
+  async function walk(dir, depth) {
+    if (depth > 8) return;
+    for (const entry of await readdir(dir, {withFileTypes: true}).catch(() => [])) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) { if (!SKIP_DIRS.has(entry.name)) await walk(path, depth + 1); continue; }
+      const fastlane = /(?:privacy|terms|eula)_url\.txt$/i.test(entry.name);
+      if (!fastlane && !TEXT_FILE.test(entry.name)) continue;
+      if ((await stat(path)).size > 1_000_000) continue;
+      const text = await readFile(path, 'utf8').catch(() => '');
+      for (const [url] of text.matchAll(/https?:\/\/[^\s"'<>()`\\]+/g)) {
+        const clean = url.replace(/[.,;:]+$/, '');
+        const kind = KIND.find(([, re]) => re.test(clean) || (fastlane && re.test(entry.name)))?.[0];
+        if (!kind) continue;
+        const where = path.slice(root.length + 1);
+        if (!found[kind].has(clean)) found[kind].set(clean, {url: clean, foundIn: []});
+        const item = found[kind].get(clean);
+        if (item.foundIn.length < 3) item.foundIn.push(where);
+      }
+    }
+  }
+  await walk(root, 0);
+  const result = {};
+  for (const kind of Object.keys(found)) {
+    result[kind] = [...found[kind].values()];
+    if (check) for (const item of result[kind]) {
+      try {
+        const response = await fetch(item.url, {redirect: 'follow', signal: AbortSignal.timeout(8000)});
+        item.status = response.status;
+      } catch { item.status = null; }
+      item.reachable = item.status !== null && item.status < 400;
+    }
+  }
+  return result;
+}
+
 async function main(args) {
+  if (args.includes('--scan')) {
+    const root = resolve(args[args.indexOf('--scan') + 1] ?? '.');
+    console.log(JSON.stringify(await scan(root, {check: !args.includes('--no-check')}), null, 2));
+    return;
+  }
   if (args.includes('--whoami')) {
     const id = await firebaseIdentity();
     if (!id) throw Error('Not signed in to Firebase. Run: firebase login');
@@ -146,7 +193,7 @@ async function main(args) {
     return;
   }
   const at = args.indexOf('--config');
-  if (at < 0 || !args[at + 1]) throw Error('Usage: publish-policy.mjs --whoami | --config <policy-site.json> [--deploy]');
+  if (at < 0 || !args[at + 1]) throw Error('Usage: publish-policy.mjs --scan <app-root> [--no-check] | --whoami | --config <policy-site.json> [--deploy]');
   const config = await loadConfig(resolve(args[at + 1]));
   const urls = await build(config);
   console.log(`Built ${Object.keys(urls).length} page(s) in ${join(config.outDir, 'public')}`);

@@ -1,7 +1,7 @@
 ---
 name: shipfast
-description: Ship any mobile app to Google Play and/or the Apple App Store fast - for Flutter, React Native, Expo, native Android (Gradle) or native iOS (Xcode) projects. Detects the app and platform, verifies signed builds, prepares the review account, designs the app icon, captures real-device screenshots, renders all store images (Play phone screenshots and feature graphic; iPhone screenshots and App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 images), drafts listing text and the privacy policy and publishes it on Firebase Hosting, fills data/privacy declarations from code evidence, and tracks Play Console / App Store Connect state through review. Use for requests like "/shipfast launch Android app on Play Store", "/shipfast ios", "publish my app", "submit for review", "make store screenshots", "make an app icon", "Header and Search Results images", or "resume the release".
-argument-hint: "[launch|resume|status|icon|screenshots|images|listing|privacy] [android|ios|both] [app path or name]"
+description: Ship any mobile app to Google Play and/or the Apple App Store fast - for Flutter, React Native, Expo, native Android (Gradle) or native iOS (Xcode) projects. Detects the app and platform, verifies signed builds, prepares the review account, designs the app icon, captures real-device screenshots, renders all store images (Play phone screenshots and feature graphic; iPhone screenshots and App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 images), drafts listing text, checks for a privacy policy and terms of use and offers to generate and auto-upload missing ones to Firebase Hosting, fills data/privacy declarations from code evidence, and tracks Play Console / App Store Connect state through review. Use for requests like "/shipfast launch Android app on Play Store", "/shipfast ios", "publish my app", "submit for review", "make store screenshots", "make an app icon", "Header and Search Results images", or "resume the release".
+argument-hint: "[launch|resume|status|icon|screenshots|images|listing|privacy|terms] [android|ios|both] [app path or name]"
 ---
 
 # ShipFast
@@ -14,7 +14,7 @@ Parse `$ARGUMENTS` (or the user's sentence) into:
 
 | Part | Values | Default |
 | --- | --- | --- |
-| Action | `launch` (full flow), `resume`, `status`, `icon`, `screenshots`, `images` (store graphics), `listing` (store text), `privacy` | `launch` |
+| Action | `launch` (full flow), `resume`, `status`, `icon`, `screenshots`, `images` (store graphics), `listing` (store text), `privacy` / `terms` (section 5a) | `launch` |
 | Platform | `android` / Play Store / Google Play, `ios` / App Store / iPhone, `both` | Ask only if the repo builds for both and the request does not say |
 | Target | App path or name in the repo | The only app in the repo; ask if there are several |
 
@@ -37,7 +37,7 @@ Run the steps in order, skipping ones already verified in the state file. Each s
 4. **Review account** - if the app needs sign-in, create a working account, change any initial password, verify sign-in on the release build.
 5. **App icon** - section 4.
 6. **Screenshots and store images** - section 5.
-7. **Listing text, privacy policy and its public site** - [references/store-listing.md](references/store-listing.md). Section 5a covers publishing to Firebase Hosting.
+7. **Listing text, privacy policy and terms of use** - [references/store-listing.md](references/store-listing.md). Section 5a covers checking for existing pages and letting the developer choose Firebase auto-upload.
 8. **Declarations** - data safety / App Privacy, content rating, target audience, ads, export compliance, from code and runtime evidence.
 9. **Upload, fill, save, submit** - within the scope in section 6, re-reading after every save.
 10. **Report** - section 7.
@@ -78,21 +78,32 @@ After rendering, open every output and check fonts, overflow, clipped UI and sen
 
 `<skill>` is the folder containing this SKILL.md. The renderers need `sharp`: if `node -e "import('sharp')"` fails in `<skill>`, run `npm install --prefix <skill>` once.
 
-## 5a. Publish the privacy policy (Firebase Hosting, required)
+## 5a. Privacy policy and terms of use: check, then let the developer choose
 
-The stores need public URLs for the privacy policy, support and account deletion. ShipFast publishes them on a dedicated Firebase Hosting site.
+The stores need public URLs: a privacy policy (both stores), support (App Store) and account deletion (when the app has accounts). A terms of use page is needed when the app has accounts, user content or paid features. Apps with auto-renewing subscriptions on the App Store must link a Terms of Use (EULA) in their metadata.
 
-1. **Require a Firebase login.** Run `node <skill>/scripts/publish-policy.mjs --whoami`. If it fails, ask the user to run `! firebase login` themselves. Never read, print or store Firebase tokens; the script only returns the email.
-2. **Propose the identity, then confirm it once.** Show one summary and let the user edit it:
+1. **Look for what already exists.** Run `node <skill>/scripts/publish-policy.mjs --scan <app-root>`. It lists privacy and terms URLs found in the app (in-app links, fastlane `privacy_url.txt`, configs, docs), with their HTTP status. Also check the store console's saved privacy URL when a record exists.
+2. **Ask the developer, one question per document**, and show what was found:
+
+   | Document | Choices |
+   | --- | --- |
+   | Privacy policy | **Use the found URL** (only if it returns 200) · **Generate and auto-upload to Firebase Hosting** (recommended when nothing was found) · **I'll give you a URL** |
+   | Terms of use | **Use the found URL** · **Generate and auto-upload to Firebase Hosting** · **I'll give you a URL** · **None**: Play has no requirement; on the App Store, Apple's standard EULA applies (with auto-renewing subscriptions, still add a Terms of Use link, which can be Apple's standard EULA, to the app description) |
+
+   A found URL that fails (4xx/5xx, timeout) is reported and never offered as "use". Support and account-deletion pages follow the privacy choice: they are generated with it when auto-upload is chosen.
+3. **Only if auto-upload was chosen**, require a Firebase login: run `node <skill>/scripts/publish-policy.mjs --whoami`. If it fails, ask the developer to run `! firebase login` themselves. Never read, print or store Firebase tokens; the script returns only the email.
+4. **Propose the identity, then confirm it once.** Show one summary and let the developer edit it:
    - Contact email: the Firebase account email by default. Offer an alias, because it will be public. Never a noreply address.
    - Operator name: the developer name on the Play/App Store account if known, else `git config user.name`. It must match the store developer account (company or person).
-   - Firebase project: the app's own project (`project_id` in `google-services.json`, `PROJECT_ID` in `GoogleService-Info.plist`, `projectId` in `firebase_options.dart` or `.firebaserc`). Otherwise pick from `firebase projects:list`. Creating a new project is the user's decision.
-   - Site: `<app-slug>-legal` → `https://<app-slug>-legal.web.app/privacy/`, `/support/`, `/delete-account/`.
-3. **Write `.shipfast/policy-site.json`** from [templates/policy-site.example.json](templates/policy-site.example.json). Run without `--deploy` first; it builds `.shipfast/policy-site/public/` so you can open the pages locally.
-4. **Deploy and verify.** Run `--deploy`. The script creates the site if it is missing and deploys only that site, so the app's own hosting is never touched. It then fetches every URL and checks for the app name, contact email and effective date. Record the URLs in the state file's `policySite`, then enter them in the store console and re-read them.
+   - Governing law / jurisdiction (terms only): ask; never guess.
+   - Firebase project: the app's own project (`project_id` in `google-services.json`, `PROJECT_ID` in `GoogleService-Info.plist`, `projectId` in `firebase_options.dart` or `.firebaserc`). Otherwise pick from `firebase projects:list`. Creating a new project is the developer's decision.
+   - Site: `<app-slug>-legal` → `https://<app-slug>-legal.web.app/privacy/`, `/terms/`, `/support/`, `/delete-account/`.
+5. **Draft, preview and deploy.** Draft the chosen documents from evidence ([references/store-listing.md](references/store-listing.md)). Then write `.shipfast/policy-site.json` from [templates/policy-site.example.json](templates/policy-site.example.json), with only the pages being generated. Run without `--deploy` to build a local preview, then run `--deploy`. The script creates the site if missing and deploys only that site, so the app's own hosting is never touched. It then fetches every URL and checks for the app name, contact email and effective date.
+6. **Record and enter.** Store each final URL (found, given or deployed) in the state file's `policySite.urls`. Enter the URLs in the store console and re-read them.
 
 ```sh
-node <skill>/scripts/publish-policy.mjs --whoami
+node <skill>/scripts/publish-policy.mjs --scan .                                       # existing legal URLs
+node <skill>/scripts/publish-policy.mjs --whoami                                       # only for auto-upload
 node <skill>/scripts/publish-policy.mjs --config .shipfast/policy-site.json            # build + preview
 node <skill>/scripts/publish-policy.mjs --config .shipfast/policy-site.json --deploy   # publish + live check
 ```

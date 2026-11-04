@@ -84,10 +84,15 @@
     "contactEmail": null,
     "urls": {
       "privacy": null,
+      "terms": null,
       "support": null,
       "deleteAccount": null
     },
     "deployedAt": null,
-    "liveVerifiedAt": null
+    "liveVerifiedAt": null,
+    "sources": {
+      "privacy": null,
+      "terms": null
+    }
   }
 }

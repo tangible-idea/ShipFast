@@ -47,3 +47,21 @@ Build the draft from evidence, not from a generic template:
 | Changes and date | Effective date |
 
 Write it in the listing's language(s) as Markdown in `.shipfast/privacy/`, together with short `SUPPORT` and `DELETE-ACCOUNT` pages. Tell the user it is a draft, not legal advice. ShipFast publishes all three on a dedicated Firebase Hosting site (`<app-slug>-legal.web.app`, SKILL.md section 5a). If the user already hosts policies elsewhere, record that URL instead and skip the deploy. The same evidence feeds Play data safety and App Store App Privacy, so keep them consistent.
+
+## Terms of use draft
+
+Draft it only when the developer chose to generate it (SKILL.md section 5a). Base every clause on a feature that exists in the app:
+
+| Section | Include when |
+| --- | --- |
+| Who provides the service, contact | Always (same operator and email as the privacy policy) |
+| Accounts and eligibility | The app has sign-in; minimum age from the target-audience declaration |
+| User content and conduct | Users can post, upload or message |
+| Purchases and subscriptions | In-app purchases or subscriptions exist: price changes, renewal, cancellation through the store, refunds handled by Google Play / Apple |
+| Third-party services | SDKs or links the user interacts with |
+| Termination | Accounts can be suspended or deleted |
+| Disclaimers and limitation of liability | Always, in plain language |
+| Governing law | Always: the jurisdiction the developer gives; never guessed |
+| Changes and effective date | Always |
+
+Write it as `.shipfast/privacy/TERMS.<lang>.md`, link it from the privacy policy, and tell the developer it is a draft, not legal advice. On the App Store, apps with auto-renewing subscriptions must show a Terms of Use (EULA) link in the app description or set a custom EULA; linking Apple's standard EULA is acceptable. Without a custom EULA, Apple's standard EULA applies.

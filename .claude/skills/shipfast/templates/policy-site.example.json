@@ -9,6 +9,7 @@
   "outDir": "./policy-site",
   "pages": {
     "privacy": "./privacy/PRIVACY.en.md",
+    "terms": "./privacy/TERMS.en.md",
     "support": "./privacy/SUPPORT.en.md",
     "deleteAccount": "./privacy/DELETE-ACCOUNT.en.md"
   }
