@@ -1,54 +1,54 @@
 # Shipframe
 
-GitHub 저장소를 연결해 첫 스토어 출시를 준비하는 로컬 웹 서비스입니다. Flutter 저장소의 기존 스토어 스크린샷을 찾아 iPhone, iPad, Android phone, Android tablet별로 점검합니다. 발견된 실제 화면을 스토어 크기로 정리하고 로고 시안, 개인정보처리방침 초안을 ZIP으로 내보냅니다.
+A local web service that connects a GitHub repository and prepares its first store release. It finds existing store screenshots in a Flutter repository and checks them for iPhone, iPad, Android phone and Android tablet. It resizes the real screens it finds to store sizes and exports them with logo drafts and a privacy policy draft as a ZIP.
 
-## 실행
+## Run
 
 ```bash
 npm install
 cp .env.example .env
-# .env에 GitHub OAuth Client ID, Client Secret, SESSION_SECRET, POE_API_KEY 입력
+# Fill in the GitHub OAuth Client ID, Client Secret, SESSION_SECRET and POE_API_KEY in .env
 npm start
 ```
 
-브라우저에서 `http://localhost:4321`을 엽니다. GitHub OAuth 앱의 Homepage URL은 `http://localhost:4321`, Authorization callback URL은 `http://localhost:4321/auth/github/callback`로 설정합니다. 비공개 저장소 접근을 위해 OAuth `repo` 범위를 요청합니다. Poe API 키는 [Poe API Keys](https://poe.com/api/keys)에서 발급받습니다. 아이콘 시안 3개를 생성할 때 Poe 포인트가 사용됩니다. 운영 환경에서는 HTTPS `BASE_URL`, 영속 세션 저장소, 토큰 암호화와 GitHub App의 세분화된 권한으로 전환해야 합니다.
+Open `http://localhost:4321` in a browser. Set the GitHub OAuth app's Homepage URL to `http://localhost:4321` and its Authorization callback URL to `http://localhost:4321/auth/github/callback`. The OAuth `repo` scope is requested to access private repositories. Get a Poe API key from [Poe API Keys](https://poe.com/api/keys); generating three icon drafts uses Poe points. In production, switch to an HTTPS `BASE_URL`, a persistent session store, token encryption and a GitHub App with fine-grained permissions.
 
-## 자동화 범위
+## What it automates
 
-- GitHub OAuth 로그인, 접근 가능한 저장소 선택, 소스 파일 및 스크린샷 인벤토리 분석
-- `store/.../screenshots/` 등의 기존 실제 화면을 찾아 휴대폰/태블릿으로 분류
-- 비율이 맞는 화면만 기기별 PNG로 크기 변환, 잘못된 비율은 누락으로 기록
-- 소스에서 아이콘 테마와 대표색을 찾고, 없으면 사용자에게 입력 요청
-- Poe Nano-Banana-2-Lite로 아이콘 시안 3개 생성 후 선택; iOS용 1024px PNG와 Google Play용 512px PNG 제작. GitHub 연결 없이도 테마와 컬러를 직접 입력해 아이콘 ZIP을 받을 수 있습니다.
-- 입력한 실제 데이터 처리 정보를 이용한 한국어 개인정보처리방침 초안 제작
-- 기기별 결과와 누락 항목을 포함한 ZIP 다운로드
+- GitHub OAuth sign-in, selecting an accessible repository, and analyzing the source file and screenshot inventory
+- Finding existing real screens such as `store/.../screenshots/` and classifying them as phone or tablet
+- Resizing only correctly proportioned screens to per-device PNGs; wrong ratios are recorded as missing
+- Finding the icon theme and brand color in the source, or asking the user when none is found
+- Generating three icon drafts with Poe Nano-Banana-2-Lite for selection, then producing a 1024px PNG for iOS and a 512px PNG for Google Play. Without connecting GitHub, you can also enter a theme and color directly and download an icon ZIP.
+- Drafting a privacy policy from the real data-handling information you enter
+- Downloading a ZIP with per-device results and missing items
 
-Flutter 저장소에 `test/store/store_screenshots_test.dart`가 있다면 분석 결과에 표시합니다. 이 버전은 타인의 저장소 코드를 서버에서 실행하지 않습니다. 원본 화면이 없다면 앱의 스크린샷 테스트를 실행하거나 기기에서 캡처한 뒤 저장소에 추가해야 합니다. 태블릿 이미지는 실제 태블릿 화면이어야 하며 휴대폰 화면을 늘려 대체하지 않습니다.
+If the Flutter repository has `test/store/store_screenshots_test.dart`, the analysis shows it. This version never runs other people's repository code on the server. If there are no source screens, run the app's screenshot test or capture them on a device and add them to the repository. Tablet images must be real tablet screens; phone screens are never stretched as a substitute.
 
-개인정보처리방침은 법률 검토가 끝난 문서가 아닙니다. 실제 SDK, 데이터 흐름, 보관 기간과 스토어 데이터 공개 항목을 확인하고 공개 URL에 게시해야 합니다.
+The privacy policy is not a legally reviewed document. Check the actual SDKs, data flows, retention periods and store data disclosures, then publish it at a public URL.
 
-## 출시 지원 스킬
+## Release support skill
 
-실제 출시 작업에서 정리한 절차는 Claude Code 스킬 [`store-launch`](.claude/skills/store-launch/SKILL.md)로 묶었습니다. 대상 식별·상태 확인·실행 범위·검증 기준은 진입 문서에, 플랫폼별 상세 절차는 [Google Play](.claude/skills/store-launch/references/google-play.md)와 [App Store](.claude/skills/store-launch/references/app-store.md) reference에 있습니다. an earlier release case에는 실제로 확인한 결과와 남은 작업을 기록합니다. 재개할 때는 [상태 템플릿](.claude/skills/store-launch/templates/)을 앱별 비공개 작업 폴더에 복사해 사용합니다.
+The procedure distilled from real release work is packaged as the Claude Code skill [`store-launch`](.claude/skills/store-launch/SKILL.md). Target identification, state checks, execution scope and verification criteria are in the entry document; detailed per-platform procedures are in the [Google Play](.claude/skills/store-launch/references/google-play.md) and [App Store](.claude/skills/store-launch/references/app-store.md) references. The an earlier release case records what was actually confirmed and what remains. To resume, copy a [state template](.claude/skills/store-launch/templates/) into the app's private work folder.
 
-다른 프로젝트에서는 `npx skills`로 설치합니다 (이 저장소에 대한 GitHub 접근 권한 필요). 자세한 옵션은 [스킬 README](.claude/skills/store-launch/README.md)를 참고하세요.
+In other projects, install it with `npx skills` (requires GitHub access to this repository). See the [skill README](.claude/skills/store-launch/README.md) for all options.
 
 ```bash
-npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code      # 현재 프로젝트
-npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code -g   # 사용자 전체
-npm install --prefix .claude/skills/store-launch                              # 렌더러 의존성(sharp), 전역이면 ~/.claude/skills/store-launch
+npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code      # current project
+npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code -g   # all your projects
+npm install --prefix .claude/skills/store-launch                              # renderer dependency (sharp); ~/.claude/skills/store-launch for -g
 ```
 
-실기기에서 촬영하고 공개 검토한 화면으로 스토어 자산을 만듭니다:
+Store assets are rendered from screens captured on a real device and reviewed for public use:
 
-- Google Play: [render-play-assets.mjs](.claude/skills/store-launch/scripts/render-play-assets.mjs) → Phone screenshots 1080×1920, Feature graphic 1024×500
-- App Store: [render-app-store-assets.mjs](.claude/skills/store-launch/scripts/render-app-store-assets.mjs) → iPhone screenshots(기본 1320×2868), Product Page Header 3840×1646(21:9), Search Results 1920×1280–3840×2560(3:2), 공용 5244×2950(16:9). `--guides`로 crop 미리보기를 함께 만듭니다.
+- Google Play: [render-play-assets.mjs](.claude/skills/store-launch/scripts/render-play-assets.mjs) → phone screenshots 1080×1920, feature graphic 1024×500
+- App Store: [render-app-store-assets.mjs](.claude/skills/store-launch/scripts/render-app-store-assets.mjs) → iPhone screenshots (default 1320×2868), Product Page Header 3840×1646 (21:9), Search Results 1920×1280–3840×2560 (3:2), universal 5244×2950 (16:9). `--guides` also writes crop previews.
 
 ```bash
 node .claude/skills/store-launch/scripts/render-app-store-assets.mjs --config /path/to/private/app-store-assets.json --guides
 ```
 
-스킬과 스크립트는 Console이나 App Store Connect 업로드·심사 제출을 자동으로 수행하지 않습니다. 생성한 파일의 업로드·선택·저장은 별도로 확인합니다.
+The skill and scripts never upload to or submit in Play Console or App Store Connect by themselves. Uploading, selecting and saving the generated files are verified separately.
 
 ## Languages
 
