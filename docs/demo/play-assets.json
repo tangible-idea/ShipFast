@@ -1,0 +1,14 @@
+{
+  "appName": "Pocket Garden",
+  "eyebrow": "POCKET GARDEN",
+  "brandColor": "#16a34a",
+  "outputDir": "./out",
+  "icon": "./out/icons/google-play-icon-512.png",
+  "provenance": {"deviceType": "demo-mockup", "packageId": "com.example.pocketgarden", "versionName": "1.0.0", "versionCode": 1},
+  "screens": [
+    {"input": "./captures/plants.png", "output": "phoneScreenshots/01-plants.png", "title": "Know which plants\nneed water today", "subtitle": "One list for every plant you own", "crop": {"left": 0, "top": 96, "width": 1080, "height": 2114}, "reviewedForPublicUse": true},
+    {"input": "./captures/calendar.png", "output": "phoneScreenshots/02-calendar.png", "title": "Plan care\nweeks ahead", "subtitle": "Every watering on one calendar", "crop": {"left": 0, "top": 96, "width": 1080, "height": 2114}, "reviewedForPublicUse": true},
+    {"input": "./captures/detail.png", "output": "phoneScreenshots/03-detail.png", "title": "Care notes\nfor each plant", "subtitle": "Water, light and history", "crop": {"left": 0, "top": 96, "width": 1080, "height": 2114}, "reviewedForPublicUse": true}
+  ],
+  "feature": {"screenIndices": [0, 2], "headline": "Never forget to water", "subtitle": "Reminders · Calendar · Care notes"}
+}

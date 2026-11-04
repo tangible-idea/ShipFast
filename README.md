@@ -30,6 +30,10 @@ npm install --prefix .claude/skills/shipfast                               # ren
 
 See the [skill README](.claude/skills/shipfast/README.md) for usage, update/remove commands and the full list of outputs.
 
+**Walkthrough:** [what happens when you run `/shipfast launch Android app on Play Store`](docs/use-case-android.md). It includes flow diagrams, how the screenshots, feature graphic and icon are made (with real renderer output), and how the privacy policy is built from code evidence.
+
+![Rendered feature graphic for a demo app](docs/images/feature-graphic.png)
+
 ### Store images it renders
 
 | Store | Output | Size |
