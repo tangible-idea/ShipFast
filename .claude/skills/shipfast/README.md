@@ -22,7 +22,7 @@ What the agent does, with local scripts only (no external image API or key):
 - Drafts listing text within each store's limits and a privacy policy from code evidence.
 - Fills data safety / App Privacy and other declarations from code and runtime evidence, then uploads, saves and submits within the scope you give it, tracking every item in `.shipfast/`.
 
-See [SKILL.md](SKILL.md) for the procedure, and the [Android walkthrough](https://github.com/tangible-idea/ShipFast/blob/main/docs/use-case-android.md) for diagrams and real example output.
+See [SKILL.md](SKILL.md) for the procedure.
 
 ## Install
 
