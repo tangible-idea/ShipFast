@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {analyze,iconBrand,screenshotPaths,classify,logoSvg,privacyMarkdown,launchReadme,shotSummary,normalizeLang,renderShot,devices,platformOf} from '../src/core.js';
+import {analyze,iconBrand,screenshotPaths,classify,logoSvg,logoIcons,privacyMarkdown,launchReadme,shotSummary,normalizeLang,renderShot,devices,platformOf} from '../src/core.js';
 
 const tree=[{path:'pubspec.yaml',type:'blob',size:100,sha:'a'},{path:'test/store/store_screenshots_test.dart',type:'blob',size:100,sha:'b'},{path:'store/app_store/screenshots/ko/01_link.png',type:'blob',size:100,sha:'c'}];
 test('Flutter 저장소의 화면과 스크린샷 테스트를 감지한다',()=>{
@@ -47,4 +47,11 @@ test('all marked page strings have English and Japanese translations',async()=>{
   assert.ok(translations.en[key],`English: ${key}`);
   assert.ok(translations.ja[key],`Japanese: ${key}`);
  }
+});
+test('내장 로고로 iOS 1024px과 Google Play 512px 아이콘을 만든다',async()=>{
+ const {ios,play}=await logoIcons('Townloader','#2a6fbb','travel');
+ const [a,b]=await Promise.all([sharp(ios).metadata(),sharp(play).metadata()]);
+ assert.deepEqual([a.width,a.height,a.hasAlpha],[1024,1024,false]);
+ assert.deepEqual([b.width,b.height],[512,512]);
+ assert.ok(play.length<=1_048_576);
 });

@@ -1,6 +1,6 @@
 ---
 name: store-launch
-description: Prepare or resume a first store release of a mobile app on Google Play and/or the Apple App Store - identify the exact app and package/bundle, verify signed builds, prepare a working review account, capture real-device screenshots, render store assets (Play phone screenshots + feature graphic; iPhone screenshots + App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 creative), fill content/privacy declarations from code evidence, and track Console/App Store Connect state through submission. Use when the user asks to launch or publish an app, register it in a store, work in Play Console or App Store Connect, submit for review, make store screenshots, a feature graphic or Header and Search Results images, or resume a release.
+description: Prepare or resume a first store release of a mobile app on Google Play and/or the Apple App Store - identify the exact app and package/bundle, verify signed builds, prepare a working review account, design app icon concepts as SVG and render store icons, capture real-device screenshots, render store assets (Play phone screenshots + feature graphic; iPhone screenshots + App Store Product Page Header 21:9, Search Results 3:2 and universal 16:9 creative), fill content/privacy declarations from code evidence, and track Console/App Store Connect state through submission. Use when the user asks to launch or publish an app, register it in a store, work in Play Console or App Store Connect, submit for review, make an app icon, store screenshots, a feature graphic or Header and Search Results images, or resume a release.
 ---
 
 # Store launch
@@ -44,6 +44,25 @@ node <skill>/scripts/render-play-assets.mjs --config <private>/play-assets.json
 #  + creative/universal-5244x2950.png (16:9, shared by both placements). --guides adds crop previews
 node <skill>/scripts/render-app-store-assets.mjs --config <private>/app-store-assets.json --guides
 ```
+
+### App icon
+
+The agent designs the icon itself; no external image API is used.
+
+1. Find the app's purpose, existing logo and brand color in the source (theme seed colors, launcher icons, README). Reuse an existing logo if the user has one.
+2. Write 3 distinct concepts as SVG files in the private work folder: `viewBox="0 0 1024 1024"`, a full-bleed opaque background, one simple centered symbol inside the central ~66%, no text smaller than the symbol, no rounded outer corners (the stores apply their own masks), no external references, no other brands' logos.
+3. Render a comparison sheet, open it, and check the masked and small sizes. Show it to the user and let them choose; revise if asked.
+4. Render the chosen concept.
+
+```sh
+node <skill>/scripts/render-app-icons.mjs --sheet a.svg b.svg c.svg --out <private>/icon-sheet.png
+node <skill>/scripts/render-app-icons.mjs --final b.svg --out <private>/icons
+# → ios-app-icon-1024.png (no alpha), google-play-icon-512.png (≤ 1 MiB), icons-manifest.json
+```
+
+The script rejects SVGs with transparent pixels or external references.
+
+### Screenshots and promotional images
 
 Config examples: [templates/real-device-assets.example.json](templates/real-device-assets.example.json), [templates/app-store-assets.example.json](templates/app-store-assets.example.json). Paths are relative to the config file, and outputs with the same name are overwritten.
 

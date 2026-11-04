@@ -117,3 +117,12 @@ export async function renderShot(buffer, device) {
  // Preserve the real UI and use a neutral matte where ratios differ.
  return sharp(buffer).flatten({background:'#ffffff'}).resize(device.width,device.height,{fit:'contain',background:'#ffffff'}).png({compressionLevel:9}).toBuffer();
 }
+
+// Store icons from an opaque 1024 source: iOS forbids alpha; Google Play allows up to 1 MiB.
+export async function storeIcons(source) {
+ const ios=await sharp(source).resize(1024,1024).flatten({background:'#ffffff'}).removeAlpha().png().toBuffer();
+ const play=await sharp(source).resize(512,512).flatten({background:'#ffffff'}).ensureAlpha().png({compressionLevel:9,effort:10,palette:false}).toBuffer();
+ if(play.length>1_048_576)throw Object.assign(new Error('Google Play icon exceeds 1 MiB.'),{status:422});
+ return {ios,play};
+}
+export const logoIcons=(name,color,theme)=>storeIcons(Buffer.from(logoSvg(name,color,theme)));

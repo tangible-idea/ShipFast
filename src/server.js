@@ -6,8 +6,7 @@ import express from 'express';
 import session from 'express-session';
 import {ZipArchive} from 'archiver';
 import sharp from 'sharp';
-import {generateSamples,storeIcons} from './poe-icons.js';
-import {analyze, iconBrand, screenshotPaths, classify, platformOf, privacyMarkdown, launchReadme, shotSummary, normalizeLang, logoSvg, renderShot, devices, safeText} from './core.js';
+import {analyze, iconBrand, screenshotPaths, classify, platformOf, privacyMarkdown, launchReadme, shotSummary, normalizeLang, logoSvg, logoIcons, renderShot, devices, safeText} from './core.js';
 
 const app=express();
 const port=Number(process.env.PORT||4321);
@@ -47,7 +46,7 @@ const errors={
 function localizedError(message,lang){if(lang==='ko')return message;const index=lang==='ja'?1:0;const githubStatus=message.match(/^GitHub 요청 실패 \((\d+)\)$/);if(githubStatus)return lang==='ja'?`GitHub リクエストに失敗しました (${githubStatus[1]})`:`GitHub request failed (${githubStatus[1]})`;return errors[message]?.[index]||message;}
 
 
-app.get('/api/me',(req,res)=>res.json({configured,poeConfigured:Boolean(process.env.POE_API_KEY),user:req.session.user||null}));
+app.get('/api/me',(req,res)=>res.json({configured,user:req.session.user||null}));
 app.get('/auth/github',(req,res)=>{
  if(!configured)return res.status(503).send('GitHub OAuth is not configured. See .env.example.');
  const state=crypto.randomBytes(24).toString('hex'); req.session.oauthState=state;
@@ -89,41 +88,18 @@ async function inspect(req,repo){
  return {...analyze(tree.tree,files,shots),brand:iconBrand(files,info.description||''),repo:info.full_name,description:info.description||'',shots};
 }
 app.get('/api/analyze',auth,async(req,res,next)=>{
- try{const repo=String(req.query.repo||'');if(!validRepo(repo))return res.status(400).json({error:localizedError('저장소 이름이 올바르지 않습니다.',errorLanguage(req))});const report=await inspect(req,repo);req.session.report=report;delete req.session.iconSamples;delete req.session.iconChoice;res.json(report);}catch(e){next(e)}
+ try{const repo=String(req.query.repo||'');if(!validRepo(repo))return res.status(400).json({error:localizedError('저장소 이름이 올바르지 않습니다.',errorLanguage(req))});const report=await inspect(req,repo);req.session.report=report;res.json(report);}catch(e){next(e)}
 });
 app.get('/api/icon-preview',iconAccess,(req,res)=>{
  const color=/^#[0-9a-f]{6}$/i.test(req.query.color)?req.query.color:'#6255df';
  res.type('image/svg+xml').send(logoSvg(safeText(req.query.name,80),color,safeText(req.query.theme,80)));
 });
-app.post('/api/icon-samples',iconAccess,async(req,res,next)=>{
- try{
-  const name=safeText(req.body.name,80)||req.session.report?.appName||'My App';
-  const theme=safeText(req.body.theme,80);
-  const color=/^#[0-9a-f]{6}$/i.test(req.body.color)?req.body.color:null;
-  if(!theme||!color)return res.status(400).json({error:'Choose an icon theme and primary color first.'});
-  const samples=await generateSamples({name,theme,color},process.env.POE_API_KEY);
-  req.session.iconSamples=samples.map(x=>x.toString('base64'));
-  req.session.iconInput={name,theme,color};
-  delete req.session.iconChoice;
-  res.json({samples:[0,1,2].map(i=>`/api/icon-samples/${i}`)});
- }catch(e){next(e)}
-});
-app.get('/api/icon-samples/:index',iconAccess,(req,res)=>{
- const index=Number(req.params.index),sample=req.session.iconSamples?.[index];
- if(!Number.isInteger(index)||index<0||index>2||!sample)return res.sendStatus(404);
- res.type('png').send(Buffer.from(sample,'base64'));
-});
-app.post('/api/icon-choice',iconAccess,(req,res)=>{
- const index=Number(req.body.index);
- if(!Number.isInteger(index)||index<0||index>2||!req.session.iconSamples?.[index])return res.status(400).json({error:'Choose one of the three icon samples.'});
- req.session.iconChoice=index;
- res.json({ok:true});
-});
 app.get('/api/icon-download',iconAccess,async(req,res,next)=>{
  try{
-  const sample=req.session.iconSamples?.[req.session.iconChoice];
-  if(!sample)return res.status(400).json({error:'Choose one of the three icon samples first.'});
-  const icon=await storeIcons(Buffer.from(sample,'base64'));
+  const color=/^#[0-9a-f]{6}$/i.test(req.query.color)?req.query.color:null;
+  const theme=safeText(req.query.theme,80);
+  if(!color||!theme)return res.status(400).json({error:'Choose an icon theme and primary color first.'});
+  const icon=await logoIcons(safeText(req.query.name,80)||'My App',color,theme);
   const archive=new ZipArchive({zlib:{level:7}});
   res.setHeader('Content-Type','application/zip');res.setHeader('Content-Disposition','attachment; filename="app-icons.zip"');
   archive.on('error',e=>res.destroy(e));archive.pipe(res);
@@ -141,12 +117,9 @@ app.post('/api/export',auth,async(req,res,next)=>{
   const color=/^#[0-9a-f]{6}$/i.test(req.body.color)?req.body.color:null;
   const theme=safeText(req.body.theme,80);
   if(!color||!theme)return res.status(400).json({error:'Choose an icon theme and primary color first.'});
-  if(req.session.iconChoice===undefined||!req.session.iconSamples?.[req.session.iconChoice])return res.status(400).json({error:'Generate three icon samples and choose one first.'});
-  const approved=req.session.iconInput;
-  if(approved.name!==name||approved.theme!==theme||approved.color.toLowerCase()!==color.toLowerCase())return res.status(400).json({error:'Icon inputs changed. Generate new samples first.'});
   const selected=Array.isArray(req.body.devices)?req.body.devices.filter(x=>devices.some(d=>d.id===x)):devices.map(x=>x.id);
   const sources=report.shots;
-  const icon=await storeIcons(Buffer.from(req.session.iconSamples[req.session.iconChoice],'base64'));
+  const icon=await logoIcons(name,color,theme);
   const archive=new ZipArchive({zlib:{level:7}});
   res.setHeader('Content-Type','application/zip');res.setHeader('Content-Disposition','attachment; filename="shipframe-launch-kit.zip"');
   archive.on('error',e=>res.destroy(e));archive.pipe(res);

@@ -1,17 +1,17 @@
 # Shipframe
 
-A local web service that connects a GitHub repository and prepares its first store release. It finds existing store screenshots in a Flutter repository and checks them for iPhone, iPad, Android phone and Android tablet. It resizes the real screens it finds to store sizes and exports them with logo drafts and a privacy policy draft as a ZIP.
+A local web service that connects a GitHub repository and prepares its first store release. It finds existing store screenshots in a Flutter repository and checks them for iPhone, iPad, Android phone and Android tablet. It resizes the real screens it finds to store sizes and exports them with an app icon and a privacy policy draft as a ZIP.
 
 ## Run
 
 ```bash
 npm install
 cp .env.example .env
-# Fill in the GitHub OAuth Client ID, Client Secret, SESSION_SECRET and POE_API_KEY in .env
+# Fill in the GitHub OAuth Client ID, Client Secret and SESSION_SECRET in .env
 npm start
 ```
 
-Open `http://localhost:4321` in a browser. Set the GitHub OAuth app's Homepage URL to `http://localhost:4321` and its Authorization callback URL to `http://localhost:4321/auth/github/callback`. The OAuth `repo` scope is requested to access private repositories. Get a Poe API key from [Poe API Keys](https://poe.com/api/keys); generating three icon drafts uses Poe points. In production, switch to an HTTPS `BASE_URL`, a persistent session store, token encryption and a GitHub App with fine-grained permissions.
+Open `http://localhost:4321` in a browser. Set the GitHub OAuth app's Homepage URL to `http://localhost:4321` and its Authorization callback URL to `http://localhost:4321/auth/github/callback`. The OAuth `repo` scope is requested to access private repositories. In production, switch to an HTTPS `BASE_URL`, a persistent session store, token encryption and a GitHub App with fine-grained permissions.
 
 ## What it automates
 
@@ -19,7 +19,7 @@ Open `http://localhost:4321` in a browser. Set the GitHub OAuth app's Homepage U
 - Finding existing real screens such as `store/.../screenshots/` and classifying them as phone or tablet
 - Resizing only correctly proportioned screens to per-device PNGs; wrong ratios are recorded as missing
 - Finding the icon theme and brand color in the source, or asking the user when none is found
-- Generating three icon drafts with Poe Nano-Banana-2-Lite for selection, then producing a 1024px PNG for iOS and a 512px PNG for Google Play. Without connecting GitHub, you can also enter a theme and color directly and download an icon ZIP.
+- Building an app icon from the theme and color with the built-in SVG logo, then producing a 1024px PNG for iOS (no alpha) and a 512px PNG for Google Play. Without connecting GitHub, you can also enter a theme and color directly and download an icon ZIP. For custom icon concepts, ask the Claude agent with the `store-launch` skill below.
 - Drafting a privacy policy from the real data-handling information you enter
 - Downloading a ZIP with per-device results and missing items
 
@@ -38,6 +38,8 @@ npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code      #
 npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code -g   # all your projects
 npm install --prefix .claude/skills/store-launch                              # renderer dependency (sharp); ~/.claude/skills/store-launch for -g
 ```
+
+The agent designs app icon concepts as SVG and [render-app-icons.mjs](.claude/skills/store-launch/scripts/render-app-icons.mjs) turns the chosen one into iOS 1024px and Google Play 512px icons. No external image API or key is used.
 
 Store assets are rendered from screens captured on a real device and reviewed for public use:
 

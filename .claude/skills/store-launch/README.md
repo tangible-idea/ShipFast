@@ -1,6 +1,6 @@
 # store-launch skill
 
-An agent skill for preparing or resuming a first mobile app release on Google Play and the Apple App Store. It covers target identification, signed builds, review accounts, real-device screenshots, store asset rendering, declarations and submission state. See [SKILL.md](SKILL.md) for the procedure.
+An agent skill for preparing or resuming a first mobile app release on Google Play and the Apple App Store. It covers target identification, signed builds, review accounts, app icons, real-device screenshots, store asset rendering, declarations and submission state. Everything is done by the agent and local scripts; no external image-generation API or key is needed. See [SKILL.md](SKILL.md) for the procedure.
 
 ## Install
 
@@ -46,6 +46,10 @@ Ask the agent in natural language, for example "Prepare the App Store release fo
 The renderers can also be run on their own:
 
 ```sh
+# App icon: compare agent-authored SVG concepts, then render the chosen one
+node <skill>/scripts/render-app-icons.mjs --sheet a.svg b.svg c.svg --out icon-sheet.png
+node <skill>/scripts/render-app-icons.mjs --final b.svg --out icons   # iOS 1024 (no alpha) + Play 512
+
 # Google Play: phone screenshots 1080×1920 + feature graphic 1024×500
 node <skill>/scripts/render-play-assets.mjs --config <private>/play-assets.json
 
@@ -63,6 +67,7 @@ Start from the config examples in [templates/](templates/). Inputs must be revie
 | `SKILL.md` | Entry document: target, scope, verification and status rules |
 | `references/google-play.md` | Detailed Google Play procedure and observed Console failure modes |
 | `references/app-store.md` | Detailed App Store procedure and Header/Search Results specs |
+| `scripts/render-app-icons.mjs` | Icon comparison sheet and iOS/Play store icons from SVG |
 | `scripts/render-play-assets.mjs` | Google Play asset renderer |
 | `scripts/render-app-store-assets.mjs` | App Store asset renderer |
 | `templates/` | Renderer config examples and secret-free release state templates |
