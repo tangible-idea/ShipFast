@@ -31,6 +31,14 @@ Flutter 저장소에 `test/store/store_screenshots_test.dart`가 있다면 분�
 
 실제 출시 작업에서 정리한 절차는 Claude Code 스킬 [`store-launch`](.claude/skills/store-launch/SKILL.md)로 묶었습니다. 대상 식별·상태 확인·실행 범위·검증 기준은 진입 문서에, 플랫폼별 상세 절차는 [Google Play](.claude/skills/store-launch/references/google-play.md)와 [App Store](.claude/skills/store-launch/references/app-store.md) reference에 있습니다. an earlier release case에는 실제로 확인한 결과와 남은 작업을 기록합니다. 재개할 때는 [상태 템플릿](.claude/skills/store-launch/templates/)을 앱별 비공개 작업 폴더에 복사해 사용합니다.
 
+다른 프로젝트에서는 `npx skills`로 설치합니다 (이 저장소에 대한 GitHub 접근 권한 필요). 자세한 옵션은 [스킬 README](.claude/skills/store-launch/README.md)를 참고하세요.
+
+```bash
+npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code      # 현재 프로젝트
+npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code -g   # 사용자 전체
+npm install --prefix .claude/skills/store-launch                              # 렌더러 의존성(sharp), 전역이면 ~/.claude/skills/store-launch
+```
+
 실기기에서 촬영하고 공개 검토한 화면으로 스토어 자산을 만듭니다:
 
 - Google Play: [render-play-assets.mjs](.claude/skills/store-launch/scripts/render-play-assets.mjs) → Phone screenshots 1080×1920, Feature graphic 1024×500

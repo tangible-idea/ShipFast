@@ -1,32 +1,32 @@
-# Google Play 첫 출시 및 중단 작업 재개
+# Google Play first release and resuming interrupted work
 
-작성일: 2026-10-16. 이전 앱 등록 작업에서 확인한 운영 절차를 기반으로 한다. 정책·화면·규격은 작업 시점의 Console 및 공식 문서에서 다시 확인한다.
+Written: 2026-10-16. Based on the procedure confirmed while registering an earlier app. Re-check policies, screens and specs in the Console and official docs at the time of work.
 
-## 적용 범위와 자료
+## Scope and materials
 
-사용자가 지정한 앱의 Play Console 등록을 준비하거나 이어서 수행할 때 사용한다. 저장소 분석, 서명 산출물, 실제 Android 화면, 심사 계정, 스토어 등록정보, 콘텐츠 선언과 릴리스 상태를 연결하는 절차다.
+Use this when preparing or continuing the Play Console registration of the app the user specifies. It links repository analysis, signed artifacts, real Android screens, the review account, the store listing, content declarations and release state.
 
-- 실제 사례: an earlier release case
-- 재개용 비밀정보 없는 구조: [상태 템플릿](../templates/google-play-release-state.example.json)
-- 진입 문서: [store-launch 스킬](../SKILL.md). 이 문서는 Google Play 상세 reference다.
+- Real case: an earlier release case
+- Secret-free structure for resuming: [state template](../templates/google-play-release-state.example.json)
+- Entry document: [store-launch skill](../SKILL.md). This document is the detailed Google Play reference.
 
-## 1. 대상과 기존 상태를 먼저 맞춘다
+## 1. Align the target and existing state first
 
-Console URL의 Google 계정 인덱스(`/u/숫자/`)는 로그인 세션에 따라 달라질 수 있다. 개발자·앱 식별자와 실제 패키지명을 확인한다. 모노레포의 고객 앱과 관리자 앱을 혼동하지 않는다.
+The Google account index in Console URLs (`/u/<number>/`) can change between sign-in sessions. Confirm the developer and app identifiers and the real package name. Do not confuse the customer app with the admin app in a monorepo.
 
-확인할 값:
+Values to confirm:
 
-- Console 앱 이름·패키지, 소스 하위 폴더와 `applicationId`.
-- 실제 배포 트랙, 기존 버전 코드, 초안 릴리스, 국가/지역.
-- 업로드 인증서와 로컬 서명 인증서의 일치 여부.
-- 이전 작업 기록, 생성한 산출물, 심사 계정의 생성·비밀번호 변경·로그인 검증 상태.
-- Console에 현재 저장된 선언과 등록정보. 로컬 문서의 체크만으로 완료를 판단하지 않는다.
+- Console app name and package, source subfolder and `applicationId`.
+- Actual release track, existing version codes, draft releases, countries/regions.
+- Whether the upload certificate matches the local signing certificate.
+- Previous work records, generated artifacts, and the review account's creation, password change and sign-in verification status.
+- Declarations and listing currently saved in the Console. Do not judge completion from checkmarks in local documents alone.
 
-사용자의 기존 출시 지시가 포함하는 업로드·심사 제출은 그 범위에서 이어간다. 단계마다 같은 승인을 다시 요구하지 않는다. 국가 확대, 기존 키 교체, 운영 데이터 삭제 등 별도 결정은 기존 지시에 포함되어 있는지 판단한다. 자격증명 오류나 불명확한 데이터 처리 사실은 추측으로 채우지 않는다.
+Uploads and review submission covered by the user's existing release instruction continue within that scope. Do not ask for the same approval again at every step. Decide whether separate decisions, such as expanding countries, replacing an existing key or deleting production data, are covered by the existing instruction. Never fill in credential errors or unclear data-handling facts with guesses.
 
-## 2. 서명한 배포 파일과 앱 실행을 각각 검증한다
+## 2. Verify the signed release file and app execution separately
 
-Flutter 예시:
+Flutter example:
 
 ```sh
 cd <selected-flutter-app>
@@ -36,30 +36,30 @@ shasum -a 256 build/app/outputs/bundle/release/app-release.aab
 jarsigner -verify build/app/outputs/bundle/release/app-release.aab
 ```
 
-프로젝트의 실제 빌드 명령과 SDK를 따른다. `.env`를 assets로 포함하는 앱과 `--dart-define`을 사용하는 앱의 설정 방식을 혼용하지 않는다. JAR 서명 검증 통과만으로 올바른 업로드 키라고 단정하지 말고 인증서를 비교한다. debug 서명으로 조용히 대체되는 release 설정도 확인한다.
+Follow the project's actual build commands and SDK. Do not mix apps that bundle `.env` as assets with apps configured via `--dart-define`. Passing JAR signature verification does not prove the correct upload key; compare certificates. Also check for release configs that silently fall back to debug signing.
 
-검증 기록에는 패키지, 버전명/코드, target SDK, AAB 크기·SHA-256, 인증서 지문, 필요한 네이티브 라이브러리 정렬과 병합 Manifest를 남긴다. target API와 페이지 크기 요구는 날짜를 하드코딩하지 않고 현재 공식 기준을 확인한다.
+Record the package, version name/code, target SDK, AAB size and SHA-256, certificate fingerprint, required native library alignment and merged manifest. Do not hardcode dates for target API and page-size requirements; check the current official criteria.
 
-기기에 설치되는 파일은 APK이고 Console 제출 파일은 AAB다. 같은 release 설정과 소스에서 생성한 두 파일인지 연결해 기록한다. APK 실행 성공은 AAB 업로드 성공의 증거가 아니다.
+The APK is what installs on a device; the AAB is what goes to the Console. Record that both files come from the same release config and source. A successful APK run is not evidence of a successful AAB upload.
 
-## 3. 심사 계정을 실제로 사용할 수 있게 준비한다
+## 3. Make the review account actually usable
 
-기존 심사 계정이 있는지 먼저 확인하고 중복 생성하지 않는다. 조직 전용 앱이면 일반 사용자 계정으로 관리자 기능을 검증하지 않는다.
+First check whether a review account already exists, and do not create duplicates. For organization-only apps, do not verify admin features with a regular user account.
 
-1. 승인된 관리 화면/API로 심사 계정을 생성한다.
-2. 최초 비밀번호 변경이 필요한 계정은 변경을 완료한다.
-3. 새 비밀번호로 다시 로그인하고 실제 역할·권한을 확인한다.
-4. 제출할 Android release APK에서도 로그인과 주요 메뉴를 확인한다.
-5. Console의 `Sign-in details`(기존 `App access`)에 계정과 영어 안내를 입력한다.
-6. 모달의 `Add`와 바깥 페이지의 `Save`를 구분하고, 저장 후 재조회한다.
+1. Create the review account through an approved admin screen or API.
+2. If the account requires an initial password change, complete it.
+3. Sign in again with the new password and confirm the actual role and permissions.
+4. Confirm sign-in and the main menus in the Android release APK you will submit.
+5. Enter the account and English instructions in the Console's `Sign-in details` (formerly `App access`).
+6. Distinguish the modal's `Add` from the outer page's `Save`, and re-read after saving.
 
-이번 UI에서는 추가 안내가 500자 제한이었다. 저장 실패 메시지와 글자 수를 확인한다. 체크박스는 현재 값을 읽고 필요한 값으로 맞춘다. 무조건 클릭하면 이미 체크된 항목을 해제할 수 있다.
+In this UI the additional instructions were limited to 500 characters. Check save-failure messages and the character count. Read each checkbox's current value and set it to the required value; clicking blindly can uncheck an already checked item.
 
-심사용 비밀번호·세션·토큰·키스토어·서명 비밀번호를 Git, 진행 문서, 스크린샷, 일반 로그에 남기지 않는다. 앱별로 Git에서 제외된 로컬 비공개 파일(권한 600)을 쓰고, 상태 문서에는 비밀 파일이 있다는 사실과 검증 결과만 기록한다. 입력 도구가 지원하면 비밀번호를 stdin으로 전달한다. 자격증명 입력 후 접근성 트리에도 값이 포함될 수 있으므로 전체 트리를 출력하거나 공유하지 않는다.
+Never leave review passwords, sessions, tokens, keystores or signing passwords in Git, progress documents, screenshots or general logs. Use a per-app local private file excluded from Git (mode 600), and record in state documents only that the secret file exists plus the verification results. Pass passwords via stdin when the input tool supports it. Credential values may also appear in the accessibility tree after input, so do not print or share the full tree.
 
-## 4. 실기기 스크린샷과 Feature graphic
+## 4. Real-device screenshots and feature graphic
 
-실기기 촬영을 요청받으면 에뮬레이터 화면을 최종 결과로 대체하지 않는다. Android 단말의 모델·serial·촬영 해상도·APK 버전을 기록하고, 여러 기기가 연결된 경우 모든 ADB 명령에 `-s <serial>`을 지정한다.
+When real-device capture is requested, do not substitute emulator screens as the final result. Record the Android device model, serial, capture resolution and APK version, and pass `-s <serial>` to every ADB command when multiple devices are connected.
 
 ```sh
 adb devices -l
@@ -69,99 +69,99 @@ adb -s <serial> shell am start -n <package>/.MainActivity
 adb -s <serial> exec-out screencap -p > <private-capture-path>.png
 ```
 
-`install -r`이 서명 불일치로 실패하면 기존 앱을 즉시 삭제하지 않는다. 기존 데이터에 영향을 주는 재설치는 별도로 판단한다. 해상도 등을 변경하기 전에 물리값과 기존 override를 모두 기록하고, 촬영 후 이전 설정으로 복구한다. 기존 override가 있던 기기에서 무조건 `wm size reset`을 실행하면 원래 설정을 잃는다. 설정 변경 직후 캡처는 이전 프레임일 수 있으므로 실제 이미지 크기와 화면을 다시 확인한다.
+If `install -r` fails with a signature mismatch, do not immediately uninstall the existing app. Reinstalling in a way that affects existing data is a separate decision. Before changing resolution or similar settings, record both the physical values and any existing override, and restore the previous settings after capture. Running `wm size reset` unconditionally on a device that had an override loses the original setting. A capture right after a settings change may be a stale frame, so re-check the actual image size and screen.
 
-원본 캡처는 비공개 폴더에서 검토한다. 고객 이름·연락처·이메일·출결, 출입 비밀번호, 접근 토큰이 공개 자산에 들어가지 않도록 한다. 안전한 화면을 선택하거나 실제 데모 데이터를 사용한다. 민감한 내용을 피하려고 운영 데이터를 임의로 바꾸지 않는다.
+Review raw captures in a private folder. Keep customer names, contacts, emails, attendance, venue door codes and access tokens out of public assets. Choose safe screens or use real demo data. Do not arbitrarily alter production data to avoid sensitive content.
 
-- Phone screenshots: 제출 APK의 실제 화면을 사용한다. 이번 Console은 2–8장, PNG/JPEG, 장당 최대 8 MB, 16:9 또는 9:16, 변 길이 320–3,840 px를 표시했다. 현재 UI에서 재확인한다.
-- Feature graphic: 실제 캡처와 기존 로고·브랜드 색을 조합해 제작할 수 있다. 이번 Console은 1024×500 PNG/JPEG, 최대 15 MB였다. 스크린샷과 용도가 다르다.
-- 앱 아이콘: 이번 Console은 512×512 PNG/JPEG, 최대 1 MB였다.
-- 태블릿 화면은 실제 태블릿 레이아웃으로 촬영한다. 휴대폰 화면을 늘려 대체하지 않는다.
+- Phone screenshots: use real screens from the submitted APK. This Console showed 2–8 images, PNG/JPEG, up to 8 MB each, 16:9 or 9:16, sides 320–3,840 px. Re-check in the current UI.
+- Feature graphic: may combine real captures with the existing logo and brand colors. This Console showed 1024×500 PNG/JPEG, up to 15 MB. Its purpose differs from screenshots.
+- App icon: this Console showed 512×512 PNG/JPEG, up to 1 MB.
+- Capture tablet screens with the actual tablet layout. Do not stretch phone screens as a substitute.
 
-스크린샷 속 앱 UI를 생성형 모델로 새로 그려 실제 화면처럼 제출하지 않는다. Feature graphic의 문구는 현재 기능과 일치시킨다. 파일의 규격·민감정보 검토와 Console의 업로드·선택·저장은 별개 검증 단계다.
+Do not submit app UI redrawn by a generative model as if it were a real screen. Keep feature graphic copy consistent with current features. Checking a file's specs and sensitive content and uploading, selecting and saving it in the Console are separate verification steps.
 
-### 실기기 캡처로 자산 재제작하기
+### Rebuilding assets from real-device captures
 
-[render-play-assets.mjs](../scripts/render-play-assets.mjs)는 검토한 캡처에 제목·중립 프레임을 더해 1080×1920 Phone screenshots와 1024×500 Feature graphic을 만든다. [설정 예시](../templates/real-device-assets.example.json)를 앱의 비공개 촬영 폴더에 복사해 경로·문구·출처를 채운다. 입력/출력 경로는 설정 파일 기준이다. 같은 출력 파일은 덮어쓰므로 원본 캡처는 별도 경로에 둔다.
+[render-play-assets.mjs](../scripts/render-play-assets.mjs) adds a title and a neutral frame to reviewed captures to produce 1080×1920 phone screenshots and a 1024×500 feature graphic. Copy the [config example](../templates/real-device-assets.example.json) into the app's private capture folder and fill in paths, copy and provenance. Input/output paths are relative to the config file. Outputs with the same name are overwritten, so keep raw captures in a separate path.
 
 ```sh
 node <store-launch>/scripts/render-play-assets.mjs --config /path/to/private/reviewed-captures.json
 ```
 
-각 캡처를 직접 확인한 뒤 `reviewedForPublicUse`를 true로 바꾼다. 필요하면 각 화면에 `crop: {left, top, width, height}`를 지정해 OS 알림/내비게이션 바를 제외한다. 앱 내용은 균일 배율로만 축소하며 비율을 늘리거나 UI를 새로 그리지 않는다. `icon`은 선택 사항이며 기존 로고 파일 경로다. 제목은 최대 두 줄이고, 출력 후 글꼴·줄 넘침·작은 글씨·기밀 정보 유무를 눈으로 확인한다. 한국어 환경에는 적절한 한글 글꼴이 필요하다.
+Set `reviewedForPublicUse` to true only after checking each capture yourself. If needed, set `crop: {left, top, width, height}` per screen to exclude the OS status/navigation bars. App content is only scaled uniformly; it is never stretched or redrawn. `icon` is optional and is the path to an existing logo file. Titles are at most two lines. After output, visually check fonts, line overflow, tiny text and confidential information. Korean text needs a suitable Korean font on the machine.
 
-출력 `assets-manifest.json`에는 공개 가능한 기기 모델·앱 버전·원본 파일명/해시·crop과 변환 내역만 기록한다. 원본 이미지나 기기 serial, 자격증명은 복사하지 않는다. 생성 성공은 Console 등록 완료를 뜻하지 않는다.
+The output `assets-manifest.json` records only publishable device model, app version, source file name/hash, crop and transformation. It does not copy raw images, device serials or credentials. A successful render does not mean the Console registration is complete.
 
-## 5. 콘텐츠 선언은 코드와 실행 결과를 함께 반영한다
+## 5. Content declarations reflect both code and runtime results
 
-앱별로 광고, 광고 ID, 정부, 금융, 건강, 콘텐츠 등급, 대상 연령, 데이터 보안, 개인정보처리방침, 접근 제한을 확인한다. 고객 앱의 결제 기능을 관리자 앱의 기능으로 옮겨 적지 않는다.
+For each app, check ads, advertising ID, government, financial, health, content rating, target age, data safety, privacy policy and access restrictions. Do not copy the customer app's payment features into the admin app's declarations.
 
-데이터 보안은 각 데이터 유형마다 다음 근거를 남긴다:
+For data safety, keep this evidence for each data type:
 
-| 질문 | 확인할 근거 |
+| Question | Evidence to check |
 | --- | --- |
-| 무엇을 수집하는가 | 인증·CRUD payload, SDK 전송, release 런타임 |
-| 수집/공유인가 | 기기 외 전송과 서비스 제공업체 처리·공유 예외를 실제 흐름에 대조 |
-| 일시 처리인가 | 서버 저장·로그·업무 기록의 실제 유지 여부 |
-| 필수/선택인가 | 이용자가 수집을 거절할 수 있는 실제 기능 |
-| 목적은 무엇인가 | 앱 기능·계정 관리 등 실제 사용 목적 |
-| 암호화 전송인가 | 운영 API와 SDK 요청 경로 |
-| 계정은 어떻게 생성되는가 | 자가 가입과 조직에서 발급하는 계정을 구분 |
-| 삭제 요청은 가능한가 | 요청을 실제로 전달하는 폼/API/지원 경로 |
+| What is collected | Auth/CRUD payloads, SDK transmissions, release runtime |
+| Collected or shared | Compare off-device transmission and service-provider/sharing exemptions with the actual flow |
+| Processed ephemerally | Whether server storage, logs and business records actually retain it |
+| Required or optional | Whether a real feature lets users decline collection |
+| Purpose | Actual use such as app functionality or account management |
+| Encrypted in transit | Production API and SDK request paths |
+| How accounts are created | Distinguish self sign-up from organization-issued accounts |
+| Deletion requests | The form/API/support path that actually delivers the request |
 
-SDK 설정값이 비어 있어도 전송이 없다고 단정하지 않는다. 이전 사례에서는 빈 OneSignal app ID로 초기화해도 네트워크 요청과 로컬 식별자가 포함된 오류 로그가 관찰되었다. 의존성 존재만으로 모든 SDK 수집 항목이 활성화되었다고 단정하는 것도 피한다. 병합 Manifest에 광고 ID 권한이 있는지 별도로 확인한다.
+An empty SDK config value does not prove there is no transmission. In an earlier release, initializing OneSignal with an empty app ID still produced network requests and error logs containing local identifiers. Equally, avoid concluding that every SDK collection item is active just because the dependency exists. Separately check whether the merged manifest contains the advertising ID permission.
 
-콘텐츠 등급의 이용자 상호작용은 채팅만 의미하지 않는다. 공지·숙제 등 전달 기능도 질문 범위에 맞게 검토한다. 최종 등급은 IARC가 산출하며 대상 연령 선언과 다를 수 있다.
+User interaction in the content rating does not only mean chat. Review delivery features such as announcements and homework against the question's scope. IARC computes the final rating, which can differ from the target-age declaration.
 
-삭제 폼이 완료 화면만 표시하고 서버에 요청하지 않는 경우 실제 삭제 요청 경로로 신고하지 않는다. 공개 방침과 지원 경로의 실제 범위도 확인한다. 이 문서는 다른 앱의 설문 답안을 자동 확정하는 템플릿이 아니다.
+If a deletion form only shows a completion screen without sending a request to the server, do not declare it as a real deletion request path. Also confirm the real scope of the public policy and support channel. This document is not a template for auto-filling another app's questionnaire answers.
 
-## 6. Console 조작에서 확인한 실패 방식
+## 6. Failure modes observed while operating the Console
 
-실제 브라우저 페이지 자동화 수단이 있으면 활용하고, 외부 앱의 창·메뉴·파일 선택기 조작이 필요한 경우 해당 환경의 computer-use 가이드를 따른다. 도구/CLI 이름과 브라우저 구현은 환경별로 확인한다.
+Use a real browser page-automation tool when available, and follow that environment's computer-use guidance when you need to operate external app windows, menus or file pickers. Check tool/CLI names and browser implementations per environment.
 
-| 관찰된 문제 | 다음 실행에서의 처리 |
+| Observed problem | Handling on the next run |
 | --- | --- |
-| 동작 호출은 성공했지만 화면이 변하지 않음 | 도구 호출 결과와 저장/업로드 결과를 분리하고 새 상태에서 확인 |
-| 요소 번호가 비동기 화면 변경으로 바뀜 | 현재 상태를 다시 읽고 의미와 화면 문맥으로 대상을 찾음 |
-| `Back`이 브라우저와 폼에 모두 존재 | 폼/모달 범위를 먼저 좁힘. 첫/마지막 정규식 일치만으로 결정하지 않음 |
-| 접근성 트리에서 선택지가 일부만 보임 | 화면을 스크롤하거나 PageDown 후 새 상태 조회. 미관측 행 번호 추측 금지 |
-| 초기 온보딩 모달 뒤의 폼이 트리에 보임 | 화면의 모달부터 처리하고 이후 폼 상태를 검증 |
-| 파일 선택기가 별도 OS 창으로 열림 | 창 목록을 다시 조회해 선택기와 메인 창을 구분. 기존 창 ID를 재사용하지 않음 |
-| `window_not_focused`인데 restore도 실패 | 같은 호출을 반복하지 않고 실제 창 활성화/선택기 확인 또는 의미 기반 입력 사용 |
-| 스크롤 호출 성공인데 실제 스크롤 안 됨 | 새 화면 확인 후 다른 지원 방식 사용. 성공 응답만으로 이동을 가정하지 않음 |
-| 브라우저 종료 후 임시 설문 값이 사라짐 | 지원되는 draft 저장을 사용하고 재개 시 서버에 저장된 값부터 확인 |
+| Action call succeeded but the screen did not change | Separate the tool result from the save/upload result and confirm from fresh state |
+| Element numbers changed because of async screen updates | Re-read current state and locate the target by meaning and screen context |
+| `Back` exists in both the browser and the form | Narrow to the form/modal scope first; do not decide by first/last regex match |
+| Only some options visible in the accessibility tree | Scroll or PageDown, then re-read state. Never guess unobserved row numbers |
+| Form behind an initial onboarding modal shows in the tree | Handle the on-screen modal first, then verify form state |
+| File picker opens as a separate OS window | Re-list windows to tell the picker from the main window. Do not reuse old window IDs |
+| `window_not_focused` and restore also fails | Do not repeat the same call; actually activate the window/check the picker, or use semantic input |
+| Scroll call succeeded but nothing scrolled | Check the new screen, then use another supported method. Do not assume movement from a success response |
+| Temporary questionnaire values lost after the browser closed | Use supported draft saving, and when resuming check server-saved values first |
 
-이미지 라이브러리는 파일 선택 → 업로드 완료 → 라이브러리에서 자산 선택 → `Add` → 등록정보 저장 단계일 수 있다. 파일 선택기에서 파일을 선택했다는 이유로 등록정보에 반영됐다고 보고하지 않는다. 로컬 파일 전달 서버를 쓰게 되면 필요한 공개 자산만 제공하고, `.env`·심사 계정·서명 파일이 있는 프로젝트 전체를 serve하지 않는다.
+The image library can be a sequence of file selection → upload complete → select asset in library → `Add` → save listing. Do not report it reflected in the listing just because a file was chosen in the picker. If you use a local file server, serve only the needed public assets, never the whole project with `.env`, review accounts or signing files.
 
-화면 조작 중 만든 임시 정규식 스크립트는 실험 코드다. 창 전환, 중복 라벨, 비동기 렌더, 폼 검증 오류가 처리되지 않았다면 그대로 스킬 실행기로 승격하지 않는다.
+Temporary regex scripts written while operating the screen are experimental code. Do not promote them to a skill runner as-is unless they handle window switching, duplicate labels, async rendering and form validation errors.
 
-## 7. 제출과 재개 기록
+## 7. Submission and resume records
 
-국가/지역·트랙과 버전 코드를 확인하고 AAB 업로드가 처리될 때까지 결과를 읽는다. 릴리스 노트, 필수 설정, Console의 차단 오류를 해결한 뒤 사용자가 지시한 범위에 맞춰 제출한다. 초안 릴리스가 이미 있으면 새 릴리스 생성 버튼이 비활성일 수 있으므로 기존 릴리스를 확인한다.
+Confirm countries/regions, track and version code, and read the AAB upload result until processing finishes. Resolve release notes, required settings and blocking Console errors, then submit within the scope the user instructed. If a draft release already exists, the create-new-release button may be disabled, so check the existing release.
 
-다음 상태는 구별해 기록한다:
+Record these states distinctly:
 
 `prepared` → `local_verified` → `console_saved` → `submitted` → `approved` → `public`
 
-모든 항목이 모든 상태를 거치지는 않는다. 실패하거나 멈춘 항목에는 마지막 확인 시점, 실제 화면/메시지, 다음 동작을 기록한다. 사용자의 실제 게시 요청을 단지 계획·로컬 준비로 완료 처리하지 않는다. Google 심사 대기는 제출 완료와 구분해서 보고한다.
+Not every item goes through every state. For failed or stalled items, record the last check time, the actual screen/message and the next action. Do not mark a user's actual publish request complete with only a plan or local preparation. Report Google review pending separately from submission complete.
 
-재개 기록은 앱/버전/인증서/산출물 해시/계정 검증 여부/선언 저장 상태/자산 선택 상태/트랙/국가/심사 제출 여부를 포함하되 비밀정보는 포함하지 않는다. 로컬 준비 결과와 Console 결과를 같은 완료 체크로 합치지 않는다.
+Resume records include app/version/certificate/artifact hash/account verification/declaration save status/asset selection status/track/countries/review submission, but no secrets. Do not merge local preparation results and Console results into the same completion check.
 
-## Shipframe 기능 확장 후보
+## Shipframe feature candidates
 
-현재 웹 앱이 이미 지원하는 기능과 분리해 실제 사례에서 확인한 후속 과제로 남긴다.
+Follow-up items confirmed in the real case, kept separate from what the web app already supports.
 
-- 모노레포에서 Flutter 앱 루트를 먼저 선택하고 Console 패키지와 대조하기.
-- `fastlane/metadata/android/<locale>/images/phoneScreenshots/` 등 실제 Fastlane 자산 경로 감지하기. 현재 `screenshotPaths` 정규식은 camelCase `phoneScreenshots` 경로를 놓칠 수 있다.
-- 앱 버전·서명·AAB 해시와 실기기 APK 캡처의 출처를 함께 관리하기.
-- 로그인·데이터 유형별 근거와 Console 저장 결과를 연결하는 재개 상태 관리.
-- 필수 장수, 해상도, 기기 유형과 민감정보 검토를 각각 표현하기.
-- 생성 완료와 Console 저장·제출·공개 상태를 구분하기.
+- In a monorepo, select the Flutter app root first and compare it with the Console package.
+- Detect real Fastlane asset paths such as `fastlane/metadata/android/<locale>/images/phoneScreenshots/`. The current `screenshotPaths` regex can miss the camelCase `phoneScreenshots` path.
+- Manage app version, signing and AAB hash together with the provenance of real-device APK captures.
+- Resume-state management linking sign-in and per-data-type evidence with Console save results.
+- Represent required counts, resolution, device type and sensitive-content review separately.
+- Distinguish generation complete from Console saved, submitted and public states.
 
-## 공식 참고
+## Official references
 
-- [스토어 등록정보](https://support.google.com/googleplay/android-developer/answer/9859152)
-- [그래픽 자산과 스크린샷](https://support.google.com/googleplay/android-developer/answer/9866151)
-- [데이터 보안](https://support.google.com/googleplay/android-developer/answer/10787469)
-- [계정 삭제 요건](https://support.google.com/googleplay/android-developer/answer/13327111)
-- [target API 요건](https://support.google.com/googleplay/android-developer/answer/11926878)
+- [Store listing](https://support.google.com/googleplay/android-developer/answer/9859152)
+- [Graphic assets and screenshots](https://support.google.com/googleplay/android-developer/answer/9866151)
+- [Data safety](https://support.google.com/googleplay/android-developer/answer/10787469)
+- [Account deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111)
+- [Target API requirements](https://support.google.com/googleplay/android-developer/answer/11926878)
