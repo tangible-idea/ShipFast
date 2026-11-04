@@ -25,7 +25,7 @@ export function universalSafe([w,h]=CREATIVE.universal.size) {
 }
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-const svg = (w, h, body) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><style>text{font-family:'Apple SD Gothic Neo','Noto Sans CJK KR','Hiragino Sans',sans-serif}</style>${body}</svg>`);
+const svg = (w, h, body) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><style>text{font-family:'Helvetica Neue','Noto Sans','Apple SD Gothic Neo','Hiragino Sans','Noto Sans CJK KR','Noto Sans CJK JP',sans-serif}</style>${body}</svg>`);
 const text = (x, y, size, value, fill, weight=600, anchor='start') => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${esc(value)}</text>`;
 const rounded = (w, h, r) => svg(w, h, `<rect width="${w}" height="${h}" rx="${r}" fill="white"/>`);
 const hex = c => [1,3,5].map(i => parseInt(c.slice(i,i+2),16));
@@ -190,7 +190,7 @@ export async function render(configPath, {withGuides=false}={}) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   const configIndex = process.argv.indexOf('--config');
   if (configIndex < 0 || !process.argv[configIndex+1]) {
-    console.error('Usage: node <store-launch>/scripts/render-app-store-assets.mjs --config <reviewed-captures.json> [--guides]');
+    console.error('Usage: node <skill>/scripts/render-app-store-assets.mjs --config <reviewed-captures.json> [--guides]');
     process.exitCode = 1;
   } else {
     render(resolve(process.argv[configIndex+1]), {withGuides:process.argv.includes('--guides')}).then(({out, manifest}) => {

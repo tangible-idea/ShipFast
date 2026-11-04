@@ -1,57 +1,68 @@
-# Shipframe
+# ShipFast
 
-A local web service that connects a GitHub repository and prepares its first store release. It finds existing store screenshots in a Flutter repository and checks them for iPhone, iPad, Android phone and Android tablet. It resizes the real screens it finds to store sizes and exports them with an app icon and a privacy policy draft as a ZIP.
+Ship any mobile app to Google Play and the App Store fast, with a coding agent.
 
-## Run
+```text
+/shipfast launch Android app on Play Store
+/shipfast launch ios
+```
+
+ShipFast is an agent skill ([`.claude/skills/shipfast`](.claude/skills/shipfast/SKILL.md)) for Flutter, Expo, React Native, Capacitor, native Android and native iOS apps. The agent:
+
+- detects the app, builds and verifies the signed release;
+- plans first-launch gates;
+- prepares the review account;
+- designs the app icon;
+- turns real-device captures into every store image;
+- drafts the listing text and privacy policy;
+- fills declarations from code evidence;
+- submits within the scope you approve.
+
+It keeps resumable state in `.shipfast/` in your app. No external image API or key is needed.
+
+## Install
+
+```bash
+npx skills add tangible-idea/ShipFast --skill shipfast -a claude-code       # current project
+npx skills add tangible-idea/ShipFast --skill shipfast -a claude-code -g    # all your projects
+npm install --prefix .claude/skills/shipfast                               # renderer dependency (sharp); ~/.claude/skills/shipfast for -g
+```
+
+See the [skill README](.claude/skills/shipfast/README.md) for usage, update/remove commands and the full list of outputs.
+
+### Store images it renders
+
+| Store | Output | Size |
+| --- | --- | --- |
+| Both | App icon (from agent-designed SVG) | iOS 1024×1024 (no alpha), Play 512×512 |
+| Google Play | Phone screenshots | 1080×1920 |
+| Google Play | Feature graphic | 1024×500 |
+| App Store | iPhone screenshots | 1320×2868 default (1290×2796, 1260×2736, 1284×2778, 1242×2688) |
+| App Store | Product Page Header | 3840×1646 (21:9) |
+| App Store | Search Results | 1920×1280 – 3840×2560 (3:2) |
+| App Store | Universal (both placements) | 5244×2950 (16:9) |
+
+## Develop
 
 ```bash
 npm install
+npm test
+```
+
+Tests cover the renderers in `.claude/skills/shipfast/scripts/` and the web app below.
+
+## Companion web app (optional)
+
+`src/` and `public/` contain Shipframe, a local web app that connects a GitHub repository and builds a basic launch kit without an agent. It finds existing store screenshots (currently tuned for Flutter repositories) and checks them for iPhone, iPad, Android phone and Android tablet. It also resizes correctly proportioned screens to store sizes, builds an icon from a theme and color with a built-in SVG logo, drafts a privacy policy, and exports everything as a ZIP.
+
+```bash
 cp .env.example .env
-# Fill in the GitHub OAuth Client ID, Client Secret and SESSION_SECRET in .env
+# Fill in GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET and SESSION_SECRET
 npm start
 ```
 
-Open `http://localhost:4321` in a browser. Set the GitHub OAuth app's Homepage URL to `http://localhost:4321` and its Authorization callback URL to `http://localhost:4321/auth/github/callback`. The OAuth `repo` scope is requested to access private repositories. In production, switch to an HTTPS `BASE_URL`, a persistent session store, token encryption and a GitHub App with fine-grained permissions.
+Open `http://localhost:4321`. Set the GitHub OAuth app's Homepage URL to `http://localhost:4321` and the Authorization callback URL to `http://localhost:4321/auth/github/callback`. The OAuth `repo` scope is requested for private repositories. The app never runs repository code on the server. For production use, switch to an HTTPS `BASE_URL`, a persistent session store, token encryption and a GitHub App with fine-grained permissions.
 
-## What it automates
+The interface is available in English, Japanese and Korean. The privacy draft and launch-kit README follow the selected language (`PRIVACY.en.md`, `PRIVACY.ja.md`, `PRIVACY.ko.md`). The privacy draft is not legal advice; verify SDKs, data flows and retention before publishing it.
 
-- GitHub OAuth sign-in, selecting an accessible repository, and analyzing the source file and screenshot inventory
-- Finding existing real screens such as `store/.../screenshots/` and classifying them as phone or tablet
-- Resizing only correctly proportioned screens to per-device PNGs; wrong ratios are recorded as missing
-- Finding the icon theme and brand color in the source, or asking the user when none is found
-- Building an app icon from the theme and color with the built-in SVG logo, then producing a 1024px PNG for iOS (no alpha) and a 512px PNG for Google Play. Without connecting GitHub, you can also enter a theme and color directly and download an icon ZIP. For custom icon concepts, ask the Claude agent with the `store-launch` skill below.
-- Drafting a privacy policy from the real data-handling information you enter
-- Downloading a ZIP with per-device results and missing items
-
-If the Flutter repository has `test/store/store_screenshots_test.dart`, the analysis shows it. This version never runs other people's repository code on the server. If there are no source screens, run the app's screenshot test or capture them on a device and add them to the repository. Tablet images must be real tablet screens; phone screens are never stretched as a substitute.
-
-The privacy policy is not a legally reviewed document. Check the actual SDKs, data flows, retention periods and store data disclosures, then publish it at a public URL.
-
-## Release support skill
-
-The procedure distilled from real release work is packaged as the Claude Code skill [`store-launch`](.claude/skills/store-launch/SKILL.md). Target identification, state checks, execution scope and verification criteria are in the entry document; detailed per-platform procedures are in the [Google Play](.claude/skills/store-launch/references/google-play.md) and [App Store](.claude/skills/store-launch/references/app-store.md) references. The an earlier release case records what was actually confirmed and what remains. To resume, copy a [state template](.claude/skills/store-launch/templates/) into the app's private work folder.
-
-In other projects, install it with `npx skills` (requires GitHub access to this repository). See the [skill README](.claude/skills/store-launch/README.md) for all options.
-
-```bash
-npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code      # current project
-npx skills add tangible-idea/ShipFast --skill store-launch -a claude-code -g   # all your projects
-npm install --prefix .claude/skills/store-launch                              # renderer dependency (sharp); ~/.claude/skills/store-launch for -g
-```
-
-The agent designs app icon concepts as SVG and [render-app-icons.mjs](.claude/skills/store-launch/scripts/render-app-icons.mjs) turns the chosen one into iOS 1024px and Google Play 512px icons. No external image API or key is used.
-
-Store assets are rendered from screens captured on a real device and reviewed for public use:
-
-- Google Play: [render-play-assets.mjs](.claude/skills/store-launch/scripts/render-play-assets.mjs) → phone screenshots 1080×1920, feature graphic 1024×500
-- App Store: [render-app-store-assets.mjs](.claude/skills/store-launch/scripts/render-app-store-assets.mjs) → iPhone screenshots (default 1320×2868), Product Page Header 3840×1646 (21:9), Search Results 1920×1280–3840×2560 (3:2), universal 5244×2950 (16:9). `--guides` also writes crop previews.
-
-```bash
-node .claude/skills/store-launch/scripts/render-app-store-assets.mjs --config /path/to/private/app-store-assets.json --guides
-```
-
-The skill and scripts never upload to or submit in Play Console or App Store Connect by themselves. Uploading, selecting and saving the generated files are verified separately.
-
-## Languages
-
-The interface opens in English by default. Use the language selector to switch to Japanese or Korean; the choice is saved in the browser. The downloaded privacy draft and launch-kit README follow the selected language (`PRIVACY.en.md`, `PRIVACY.ja.md`, or `PRIVACY.ko.md`).
+Neither the skill's scripts nor the web app upload to or submit in Play Console or App Store Connect by themselves.

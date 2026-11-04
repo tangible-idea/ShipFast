@@ -1,21 +1,25 @@
-# App Store first release and resuming interrupted work
+# App Store: first release and resuming interrupted work
 
-Written: 2026-11-04. This procedure carries over the principles verified in the real Google Play case ([google-play.md](google-play.md)) to the App Store. There is no real App Store registration case yet. When you run one, record it in ShipFast `docs/release-cases/` and update this document. Re-check specs and UI names in App Store Connect and the official docs at the time of work.
+Detailed App Store reference for the [shipfast skill](../SKILL.md). It applies the principles proven on Google Play ([google-play.md](google-play.md)) to App Store Connect. Re-check specs and UI names in App Store Connect and the official docs at the time of work, and update this document when they differ.
 
-Secret-free structure for resuming: [app-store-release-state.example.json](../templates/app-store-release-state.example.json)
+- Secret-free structure for resuming: [app-store-release-state.example.json](../templates/app-store-release-state.example.json)
+- Build commands per stack: [frameworks.md](frameworks.md)
+- Listing text and privacy policy: [store-listing.md](store-listing.md)
+
+## 0. Developer account and app record (first launch only)
+
+- Publishing requires an Apple Developer Program membership (annual fee; organizations need a D-U-N-S number). Enrolling or paying is the user's decision.
+- Register the bundle ID under Certificates, Identifiers & Profiles (Xcode automatic signing can do this), then create the app in App Store Connect: platform, name, primary language, bundle ID, SKU.
+- Agreements, tax and banking must be completed for paid apps or in-app purchases.
 
 ## 1. Confirm the target
 
-- Cross-check the App Store Connect app record's name, bundle ID and SKU against the source's `PRODUCT_BUNDLE_IDENTIFIER` (for Flutter, `ios/Runner.xcodeproj`). Do not confuse it with an extension target's bundle ID.
+- Cross-check the App Store Connect app record's name, bundle ID and SKU against the app target's `PRODUCT_BUNDLE_IDENTIFIER` (see [frameworks.md](frameworks.md) for where each stack keeps it). Do not confuse it with an extension target's bundle ID.
 - Record the team (Team ID), existing version and build numbers, the version being prepared, release countries/regions, price, and iPad support (`TARGETED_DEVICE_FAMILY`). If the app supports iPad, iPad screenshots are also required.
 
 ## 2. Build and upload
 
-```sh
-cd <selected-flutter-app>
-flutter build ipa --release <project-specific-production-defines>
-# or xcodebuild archive / -exportArchive (use the project's actual method)
-```
+Build with the command for the project's stack in [frameworks.md](frameworks.md), using its production configuration.
 
 - Confirm the version (`CFBundleShortVersionString`) and build (`CFBundleVersion`) are higher than previous uploads.
 - Confirm the distribution certificate and provisioning profile are for App Store distribution, and record the uploaded IPA's size and SHA-256. Replacing or revoking certificates is a separate decision.
@@ -31,7 +35,7 @@ Apps with accounts must let people start account deletion inside the app (App Re
 
 ## 4. iPhone screenshots
 
-- Capture the submitted build, installed through TestFlight, on a real iPhone. Record the device model, iOS version, app version/build and capture resolution. Keep raw captures in a private folder.
+- Capture the submitted build, installed through TestFlight, on a real iPhone. Record the device model, iOS version, app version/build and capture resolution. Keep raw captures in `.shipfast/captures/`.
 - The renderer produces portrait 1320×2868 (default), 1290×2796 and 1260×2736 from Apple's `iPhone with Dynamic Island (large display)` class, and 1284×2778 and 1242×2688 from `iPhone with Face ID (large display)`. When you upload the large-display set, other sizes are filled with scaled versions. 1–10 images per device size, JPEG/PNG. ([Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications), checked 2026-11-04)
 - The same document adds `iPhone Duo` sizes (outer 1398×2034, inner 2007×2853) and says they become required starting April 2027 for apps using the iOS 27.1 SDK or later. The renderer does not support them yet. If you build with that SDK, prepare real device screens separately.
 - The status bar can be excluded with `crop`. App UI is only scaled uniformly.

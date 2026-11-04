@@ -6,13 +6,15 @@ import sharp from 'sharp';
 // Explicitly selected and reviewed real-device captures only. Never reads a repo,
 // executes app code, signs in, or uploads anything to a store.
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-const svg = (w, h, body) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><style>text{font-family:'Apple SD Gothic Neo','Noto Sans CJK KR',sans-serif}</style>${body}</svg>`);
+const svg = (w, h, body) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><style>text{font-family:'Helvetica Neue','Noto Sans','Apple SD Gothic Neo','Hiragino Sans','Noto Sans CJK KR','Noto Sans CJK JP',sans-serif}</style>${body}</svg>`);
+const hex = c => [1,3,5].map(i => parseInt(c.slice(i,i+2),16));
+const mix = (a, b, t) => '#'+hex(a).map((v,i)=>Math.round(v+(hex(b)[i]-v)*t).toString(16).padStart(2,'0')).join('');
 const text = (x, y, size, value, fill='#191f28', weight=600) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}">${esc(value)}</text>`;
 const rounded = (w, h, r) => svg(w, h, `<rect width="${w}" height="${h}" rx="${r}" fill="white"/>`);
 
 async function main() {
   const configIndex = process.argv.indexOf('--config');
-  if (configIndex < 0 || !process.argv[configIndex + 1]) throw Error('Usage: node <store-launch>/scripts/render-play-assets.mjs --config <reviewed-captures.json>');
+  if (configIndex < 0 || !process.argv[configIndex + 1]) throw Error('Usage: node <skill>/scripts/render-play-assets.mjs --config <reviewed-captures.json>');
   const configPath = resolve(process.argv[configIndex + 1]);
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const base = dirname(configPath);
@@ -36,7 +38,8 @@ async function main() {
     const content = await sharp(raw).extract(crop).png().toBuffer();
     screens.push({...item, content, crop, sourceSha256:createHash('sha256').update(raw).digest('hex'), sourceSize:[meta.width, meta.height]});
   }
-  const featureIndices = config.feature?.screenIndices ?? [0, 1];
+  if (typeof config.feature?.headline !== 'string' || !config.feature.headline) throw Error('feature.headline is required: describe the real app in one short line.');
+  const featureIndices = config.feature.screenIndices ?? [0, 1];
   if (featureIndices.length !== 2 || !featureIndices.every(i => Number.isInteger(i) && screens[i])) throw Error('Feature graphic requires two valid screenIndices.');
   const icon = config.icon ? await sharp(resolve(base, config.icon)).resize(72, 72).flatten({background:'#fff'}).png().toBuffer() : null;
   const provenance = Object.fromEntries(['deviceType','deviceModel','packageId','versionName','versionCode','captureSize','captureDensity','capturedOn'].filter(key=>config.provenance?.[key]!==undefined).map(key=>[key,config.provenance[key]]));
@@ -44,14 +47,14 @@ async function main() {
   await mkdir(resolve(out, 'phoneScreenshots'), {recursive:true});
   for (const screen of screens) {
     const lines = String(screen.title ?? '').split('\n');
-    const bg = svg(1080, 1920, `<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#edf4ff"/><stop offset="1" stop-color="#f8faff"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#bg)"/><circle cx="1040" cy="90" r="230" fill="${color}" opacity=".07"/>${text(72,78,25,config.eyebrow ?? config.appName,color,700)}${lines.map((line,i)=>text(72,151+i*68,54,line)).join('')}${text(72,277,29,screen.subtitle,'#6b7684',400)}<rect x="62" y="337" width="956" height="1524" rx="36" fill="#1957c2" opacity=".08"/><rect x="70" y="329" width="940" height="1524" rx="34" fill="white" stroke="#dce6f5" stroke-width="2"/>`);
+    const bg = svg(1080, 1920, `<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="${mix(color,'#ffffff',0.9)}"/><stop offset="1" stop-color="${mix(color,'#ffffff',0.97)}"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#bg)"/><circle cx="1040" cy="90" r="230" fill="${color}" opacity=".07"/>${text(72,78,25,config.eyebrow ?? config.appName,color,700)}${lines.map((line,i)=>text(72,151+i*68,54,line)).join('')}${text(72,277,29,screen.subtitle,'#6b7684',400)}<rect x="62" y="337" width="956" height="1524" rx="36" fill="${color}" opacity=".08"/><rect x="70" y="329" width="940" height="1524" rx="34" fill="white" stroke="${mix(color,'#ffffff',0.82)}" stroke-width="2"/>`);
     const image = await sharp(screen.content).resize(904, 1488, {fit:'contain',background:'#ffffff'}).png().toBuffer();
     const clipped = await sharp(image).composite([{input:rounded(904,1488,18),blend:'dest-in'}]).toBuffer();
     const output = await sharp(bg).composite([{input:clipped,left:88,top:347}]).flatten({background:'#fff'}).removeAlpha().png().toBuffer();
     await writeFile(resolve(out, screen.output), output);
     manifest.assets.push({path:screen.output, size:[1080,1920], sourceFile:basename(screen.input), sourceSha256:screen.sourceSha256, sourceSize:screen.sourceSize, crop:screen.crop, transformation:'Crop system UI; scale uniformly; add brand caption and neutral frame. App UI unchanged.'});
   }
-  const feature = svg(1024,500,`<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#112044"/><stop offset="1" stop-color="#1957c2"/></linearGradient></defs><rect width="1024" height="500" fill="url(#bg)"/><circle cx="930" cy="30" r="230" fill="#fff" opacity=".055"/><circle cx="630" cy="490" r="210" fill="${color}" opacity=".18"/>${text(icon?148:54,112,41,config.appName,'#fff',700)}${text(54,213,35,config.feature?.headline ?? 'Run your classes in one place','#fff',700)}${text(54,263,24,config.feature?.subtitle ?? 'Customers · Teachers · Classes · Attendance','#c7dbff',400)}<rect x="54" y="330" width="360" height="46" rx="23" fill="#ffffff" opacity=".12"/>${text(77,360,20,config.feature?.caption ?? 'A work app for staff and teachers','#fff',500)}`);
+  const feature = svg(1024,500,`<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="${mix(color,'#05070d',0.72)}"/><stop offset="1" stop-color="${mix(color,'#05070d',0.2)}"/></linearGradient></defs><rect width="1024" height="500" fill="url(#bg)"/><circle cx="930" cy="30" r="230" fill="#fff" opacity=".055"/><circle cx="630" cy="490" r="210" fill="${color}" opacity=".18"/>${text(icon?148:54,112,41,config.appName,'#fff',700)}${text(54,213,35,config.feature.headline,'#fff',700)}${config.feature.subtitle ? text(54,263,24,config.feature.subtitle,mix(color,'#ffffff',0.78),400) : ''}${config.feature.caption ? `<rect x="54" y="330" width="${Math.round(Math.min(440, 46+config.feature.caption.length*11))}" height="46" rx="23" fill="#ffffff" opacity=".12"/>${text(77,360,20,config.feature.caption,'#fff',500)}` : ''}`);
   const overlays = icon ? [{input:icon,left:54,top:58}] : [];
   for (let i=0; i<2; i++) {
     const image = await sharp(screens[featureIndices[i]].content).resize(190,354,{fit:'contain',background:'#fff'}).png().toBuffer();
@@ -59,7 +62,7 @@ async function main() {
     const clip = await sharp(card).composite([{input:rounded(202,366,18),blend:'dest-in'}]).png().toBuffer();
     overlays.push({input:clip,left:565+i*222,top:i?88:45});
   }
-  const featureOutput = await sharp(feature).composite(overlays).flatten({background:'#112044'}).removeAlpha().png().toBuffer();
+  const featureOutput = await sharp(feature).composite(overlays).flatten({background:mix(color,'#05070d',0.72)}).removeAlpha().png().toBuffer();
   await writeFile(resolve(out,'featureGraphic.png'),featureOutput);
   manifest.assets.push({path:'featureGraphic.png',size:[1024,500],sourceScreens:featureIndices.map(i=>screens[i].output),transformation:'Brand layout composed with the same unaltered captured app content.'});
   await writeFile(resolve(out,'assets-manifest.json'),JSON.stringify(manifest,null,2)+'\n');

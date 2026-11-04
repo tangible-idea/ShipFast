@@ -7,6 +7,8 @@
     "appRoot": null,
     "packageId": null,
     "consoleAppUrl": null,
+    "developerAccountType": null,
+    "closedTestRequired": null,
     "track": null,
     "countries": [],
     "authorizationSummary": null
@@ -65,5 +67,15 @@
     "publicAt": null
   },
   "lastVerifiedObservation": null,
-  "nextAction": null
+  "nextAction": null,
+  "closedTest": {
+    "status": "unknown",
+    "trackName": null,
+    "startedAt": null,
+    "optedInTesters": 0,
+    "requiredTesters": 12,
+    "requiredDays": 14,
+    "productionAccessAppliedAt": null,
+    "productionAccessGrantedAt": null
+  }
 }

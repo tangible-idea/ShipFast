@@ -1,12 +1,12 @@
 {
-  "appName": "Example Admin",
-  "eyebrow": "EXAMPLE ADMIN",
+  "appName": "Example App",
+  "eyebrow": "EXAMPLE APP",
   "brandColor": "#3182f6",
   "outputDir": "./rendered-assets",
   "provenance": {
     "deviceType": "physical",
     "deviceModel": "FILL_FROM_DEVICE",
-    "packageId": "com.example.admin",
+    "packageId": "com.example.app",
     "versionName": "1.0.0",
     "versionCode": 1,
     "captureSize": [1080, 1920],
@@ -14,24 +14,24 @@
   },
   "screens": [
     {
-      "input": "./private-captures/login.png",
+      "input": "./captures/login.png",
       "output": "phoneScreenshots/01-login.png",
-      "title": "Sign in to\nyour workspace",
-      "subtitle": "Use your organization-issued account",
+      "title": "Everything you need\nin one place",
+      "subtitle": "Describe only what this screen shows",
       "reviewedForPublicUse": false
     },
     {
-      "input": "./private-captures/menu.png",
+      "input": "./captures/menu.png",
       "output": "phoneScreenshots/02-menu.png",
-      "title": "Your daily tools\nin one place",
+      "title": "Your main feature,\nshown for real",
       "subtitle": "Describe only features visible in the real app",
       "reviewedForPublicUse": false
     }
   ],
   "feature": {
     "screenIndices": [0, 1],
-    "headline": "Your workspace in one place",
+    "headline": "Your app in one short line",
     "subtitle": "Describe the verified app features",
-    "caption": "For authorized team members"
+    "caption": "Optional short caption"
   }
 }

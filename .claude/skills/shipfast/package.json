@@ -1,8 +1,8 @@
 {
-  "name": "store-launch-skill",
+  "name": "shipfast-skill",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Renderers for the store-launch agent skill.",
+  "description": "Renderers for the shipfast agent skill.",
   "dependencies": {"sharp": "^0.34.5"}
 }
