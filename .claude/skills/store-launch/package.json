@@ -1,0 +1,8 @@
+{
+  "name": "store-launch-skill",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Renderers for the store-launch agent skill.",
+  "dependencies": {"sharp": "^0.34.5"}
+}

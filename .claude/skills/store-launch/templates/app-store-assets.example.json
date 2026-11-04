@@ -1,0 +1,40 @@
+{
+  "appName": "Example Admin",
+  "eyebrow": "EXAMPLE ADMIN",
+  "brandColor": "#3182f6",
+  "outputDir": "./rendered-app-store-assets",
+  "provenance": {
+    "deviceType": "physical",
+    "deviceModel": "FILL_FROM_DEVICE",
+    "bundleId": "com.example.admin",
+    "version": "1.0.0",
+    "build": "1",
+    "captureSize": [1320, 2868],
+    "capturedOn": "FILL_FROM_CAPTURE_DATE"
+  },
+  "iphone": {"size": [1320, 2868]},
+  "screens": [
+    {
+      "input": "./private-captures/login.png",
+      "output": "iphoneScreenshots/01-login.png",
+      "title": "Sign in to\nyour workspace",
+      "subtitle": "Use your organization-issued account",
+      "crop": {"left": 0, "top": 186, "width": 1320, "height": 2682},
+      "reviewedForPublicUse": false
+    },
+    {
+      "input": "./private-captures/menu.png",
+      "output": "iphoneScreenshots/02-menu.png",
+      "title": "Your daily tools\nin one place",
+      "subtitle": "Describe only features visible in the real app",
+      "reviewedForPublicUse": false
+    }
+  ],
+  "creative": {
+    "placements": ["universal", "header", "search"],
+    "screenIndices": [0, 1],
+    "headline": "Your workspace in one place",
+    "subtitle": "Describe the verified app features",
+    "searchSize": [3840, 2560]
+  }
+}

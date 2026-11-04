@@ -27,6 +27,21 @@ Flutter 저장소에 `test/store/store_screenshots_test.dart`가 있다면 분�
 
 개인정보처리방침은 법률 검토가 끝난 문서가 아닙니다. 실제 SDK, 데이터 흐름, 보관 기간과 스토어 데이터 공개 항목을 확인하고 공개 URL에 게시해야 합니다.
 
+## 출시 지원 스킬
+
+실제 출시 작업에서 정리한 절차는 Claude Code 스킬 [`store-launch`](.claude/skills/store-launch/SKILL.md)로 묶었습니다. 대상 식별·상태 확인·실행 범위·검증 기준은 진입 문서에, 플랫폼별 상세 절차는 [Google Play](.claude/skills/store-launch/references/google-play.md)와 [App Store](.claude/skills/store-launch/references/app-store.md) reference에 있습니다. an earlier release case에는 실제로 확인한 결과와 남은 작업을 기록합니다. 재개할 때는 [상태 템플릿](.claude/skills/store-launch/templates/)을 앱별 비공개 작업 폴더에 복사해 사용합니다.
+
+실기기에서 촬영하고 공개 검토한 화면으로 스토어 자산을 만듭니다:
+
+- Google Play: [render-play-assets.mjs](.claude/skills/store-launch/scripts/render-play-assets.mjs) → Phone screenshots 1080×1920, Feature graphic 1024×500
+- App Store: [render-app-store-assets.mjs](.claude/skills/store-launch/scripts/render-app-store-assets.mjs) → iPhone screenshots(기본 1320×2868), Product Page Header 3840×1646(21:9), Search Results 1920×1280–3840×2560(3:2), 공용 5244×2950(16:9). `--guides`로 crop 미리보기를 함께 만듭니다.
+
+```bash
+node .claude/skills/store-launch/scripts/render-app-store-assets.mjs --config /path/to/private/app-store-assets.json --guides
+```
+
+스킬과 스크립트는 Console이나 App Store Connect 업로드·심사 제출을 자동으로 수행하지 않습니다. 생성한 파일의 업로드·선택·저장은 별도로 확인합니다.
+
 ## Languages
 
 The interface opens in English by default. Use the language selector to switch to Japanese or Korean; the choice is saved in the browser. The downloaded privacy draft and launch-kit README follow the selected language (`PRIVACY.en.md`, `PRIVACY.ja.md`, or `PRIVACY.ko.md`).

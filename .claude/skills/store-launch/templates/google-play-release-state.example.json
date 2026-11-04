@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": null,
+  "target": {
+    "appName": null,
+    "sourceRepository": null,
+    "appRoot": null,
+    "packageId": null,
+    "consoleAppUrl": null,
+    "track": null,
+    "countries": [],
+    "authorizationSummary": null
+  },
+  "artifact": {
+    "status": "unknown",
+    "versionName": null,
+    "versionCode": null,
+    "targetSdk": null,
+    "aabRelativePath": null,
+    "aabSha256": null,
+    "aabSizeBytes": null,
+    "uploadCertificateSha256": null,
+    "releaseApkRelativePath": null,
+    "signingVerifiedAt": null,
+    "consoleUploadVerifiedAt": null
+  },
+  "reviewAccess": {
+    "status": "unknown",
+    "credentialStorage": "private-local-file-not-in-version-control",
+    "role": null,
+    "initialPasswordChangeComplete": false,
+    "apiLoginVerifiedAt": null,
+    "androidLoginVerifiedAt": null,
+    "consoleSavedAt": null
+  },
+  "capture": {
+    "status": "unknown",
+    "deviceType": null,
+    "deviceModel": null,
+    "installedVersionCode": null,
+    "originalPhysicalSize": null,
+    "originalOverrideSize": null,
+    "captureSize": null,
+    "settingsRestoredAt": null,
+    "publicAssetsReviewedAt": null
+  },
+  "declarations": {
+    "status": "unknown",
+    "privacyPolicyUrl": null,
+    "dataDeletionRequestVerified": false,
+    "items": []
+  },
+  "storeListing": {
+    "status": "unknown",
+    "locale": null,
+    "assets": [],
+    "consoleSavedAt": null
+  },
+  "release": {
+    "status": "unknown",
+    "draftReleaseName": null,
+    "consoleErrors": [],
+    "submittedAt": null,
+    "approvedAt": null,
+    "publicAt": null
+  },
+  "lastVerifiedObservation": null,
+  "nextAction": null
+}

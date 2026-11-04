@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": null,
+  "target": {
+    "appName": null,
+    "sourceRepository": null,
+    "appRoot": null,
+    "bundleId": null,
+    "teamId": null,
+    "appStoreConnectAppId": null,
+    "supportsIpad": null,
+    "countries": [],
+    "authorizationSummary": null
+  },
+  "artifact": {
+    "status": "unknown",
+    "version": null,
+    "build": null,
+    "ipaRelativePath": null,
+    "ipaSha256": null,
+    "ipaSizeBytes": null,
+    "distributionCertificateSha1": null,
+    "exportComplianceAnswer": null,
+    "uploadedAt": null,
+    "processingCompletedAt": null,
+    "testflightInstallVerifiedAt": null
+  },
+  "reviewAccess": {
+    "status": "unknown",
+    "credentialStorage": "private-local-file-not-in-version-control",
+    "role": null,
+    "initialPasswordChangeComplete": false,
+    "apiLoginVerifiedAt": null,
+    "iosLoginVerifiedAt": null,
+    "inAppAccountDeletionVerified": false,
+    "connectSavedAt": null
+  },
+  "capture": {
+    "status": "unknown",
+    "deviceType": null,
+    "deviceModel": null,
+    "iosVersion": null,
+    "installedBuild": null,
+    "captureSize": null,
+    "publicAssetsReviewedAt": null
+  },
+  "creative": {
+    "status": "unknown",
+    "placements": [],
+    "previewCheckedInConnectAt": null,
+    "consoleSavedAt": null
+  },
+  "declarations": {
+    "status": "unknown",
+    "privacyPolicyUrl": null,
+    "supportUrl": null,
+    "appPrivacySavedAt": null,
+    "ageRatingSavedAt": null,
+    "items": []
+  },
+  "storeListing": {
+    "status": "unknown",
+    "locale": null,
+    "assets": [],
+    "consoleSavedAt": null
+  },
+  "release": {
+    "status": "unknown",
+    "releaseMethod": null,
+    "connectErrors": [],
+    "submittedAt": null,
+    "rejections": [],
+    "approvedAt": null,
+    "publicAt": null
+  },
+  "lastVerifiedObservation": null,
+  "nextAction": null
+}
