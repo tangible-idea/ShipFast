@@ -82,8 +82,6 @@ Run `npm install --prefix <skill folder>` again after an update if `package.json
 
 </details>
 
-> The repository is currently private: installing requires GitHub access to `tangible-idea/ShipFast`.
-
 ---
 
 ## How it works
