@@ -95,6 +95,32 @@ Set `reviewedForPublicUse` to true only after checking each capture yourself. If
 
 The output `assets-manifest.json` records only publishable device model, app version, source file name/hash, crop and transformation. It does not copy raw images, device serials or credentials. A successful render does not mean the Console registration is complete.
 
+## 4a. Fill the main store listing: every required field
+
+Play Console → **Grow users → Store presence → Main store listing** (older UI: *Store listing*). These fields are required before the app can be sent for review. A listing with any of them empty is not done.
+
+| Console field | Source | Spec |
+| --- | --- | --- |
+| App name | `## App name` in `.shipfast/listing.<locale>.md` | ≤ 30 characters |
+| Short description | `## Short description` | ≤ 80 characters |
+| Full description | `## Full description` | ≤ 4,000 characters |
+| App icon | `.shipfast/icons/final/google-play-icon-512.png` | 512×512 PNG/JPEG, ≤ 1 MB |
+| Feature graphic | `<play-assets outputDir>/featureGraphic.png` | 1024×500 PNG/JPEG, ≤ 15 MB |
+| Phone screenshots | `<play-assets outputDir>/phoneScreenshots/*.png` | 2–8 images, 320–3,840 px, long side ≤ 2× short side, ≤ 8 MB each |
+
+**1. Pre-flight.** Run `node <skill>/scripts/check-listing.mjs --root .shipfast [--locale en-US]`. It fails, listing what is missing, when any text is empty or too long or any image breaks the spec. On success it writes `.shipfast/listing-upload.json`, the field-by-field plan. Do not open the console until it passes; generate what is missing first (section 4 of SKILL.md for the icon, the renderer for images, [store-listing.md](store-listing.md) for text).
+
+**2. Text fields.** Click into each field by its label inside the Main store listing form, clear it, and type the exact text from the plan. Read the character counter under the field; it must match the plan.
+
+**3. Image fields.** Each image goes through the asset picker: **Add assets / Upload → file chosen → upload finishes → the asset is selected → Add (or Save in the dialog)**. The field then shows a thumbnail. To choose the file:
+- Use the browser tool's direct file upload into the dialog's `<input type="file">` (for example `file_upload` in Claude in Chrome) with the absolute path from the plan. This skips the OS file picker, which is the step that most often fails.
+- Only if no direct upload exists, use the OS picker with the computer-use guidance (section 6 lists the failure modes).
+- For phone screenshots, upload all files from the plan, in order, in one pass if the dialog allows it, then check the count shown (2–8).
+
+**4. Save and prove it.** Click the page's **Save** (bottom right), not just the dialog's Add. Then reload the page and check each field against the plan: text present with the same counter, a thumbnail on App icon and Feature graphic, and the right screenshot count. Check that no field shows a "required" or error message. Record each field in the state file's `storeListing.fields` as `console_saved` with the time you re-read it. A field that is still empty after the reload goes back to step 2 or 3, never to "done".
+
+If the session can't upload files at all (no browser file upload and the OS picker fails twice), stop and tell the developer exactly which fields are left, with the file paths from the plan, so they can drag them in. Then re-read the page after they say it's done.
+
 ## 5. Content declarations reflect both code and runtime results
 
 For each app, check ads, advertising ID, government, financial, health, content rating, target age, data safety, privacy policy and access restrictions. In monorepos, do not copy one app's features (for example the customer app's payments) into another app's declarations.

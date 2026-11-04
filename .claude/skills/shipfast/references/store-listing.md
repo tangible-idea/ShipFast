@@ -25,7 +25,7 @@ Rules for drafts:
 - Lead with what the app does for the user in the first line; Play's short description and App Store subtitle are the most read.
 - App Store keywords: no repeats of words already in the name or subtitle, no spaces after commas, no competitor names.
 - Localize per store locale the user wants; keep each locale's screenshots, captions and text consistent.
-- Store `.shipfast/listing.<locale>.md` with the final text so a later `resume` can re-check what was saved.
+- Store `.shipfast/listing.<locale>.md` with the final text, starting from [templates/listing.example.md](../templates/listing.example.md). Keep its `## App name`, `## Short description` and `## Full description` headings: `scripts/check-listing.mjs` reads them, and a later `resume` re-checks what was saved.
 
 ## Required URLs
 

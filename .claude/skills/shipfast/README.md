@@ -82,6 +82,7 @@ Start from the config examples in [templates/](templates/). Inputs must be revie
 | `scripts/render-app-icons.mjs` | Icon comparison sheet and iOS/Play icons from SVG |
 | `scripts/render-play-assets.mjs` | Google Play screenshots and feature graphic |
 | `scripts/render-app-store-assets.mjs` | iPhone screenshots and App Store Header/Search/universal images |
+| `scripts/check-listing.mjs` | Pre-flight for the Play main store listing: name, descriptions, icon, feature graphic, screenshots; writes the field-by-field upload plan |
 | `scripts/publish-policy.mjs` | Finds existing privacy/terms URLs; builds the privacy, terms, support and account-deletion pages and deploys them to Firebase Hosting |
 | `templates/` | Renderer configs and secret-free release state templates |
 

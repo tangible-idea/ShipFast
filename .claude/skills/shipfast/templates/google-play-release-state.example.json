@@ -59,7 +59,33 @@
     "status": "unknown",
     "locale": null,
     "assets": [],
-    "consoleSavedAt": null
+    "consoleSavedAt": null,
+    "fields": {
+      "appName": {
+        "status": "unknown",
+        "reReadAt": null
+      },
+      "shortDescription": {
+        "status": "unknown",
+        "reReadAt": null
+      },
+      "fullDescription": {
+        "status": "unknown",
+        "reReadAt": null
+      },
+      "appIcon": {
+        "status": "unknown",
+        "reReadAt": null
+      },
+      "featureGraphic": {
+        "status": "unknown",
+        "reReadAt": null
+      },
+      "phoneScreenshots": {
+        "status": "unknown",
+        "reReadAt": null
+      }
+    }
   },
   "release": {
     "status": "unknown",

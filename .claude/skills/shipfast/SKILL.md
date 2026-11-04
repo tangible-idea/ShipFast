@@ -44,7 +44,7 @@ Run the steps in order, skipping ones already verified in the state file. Each s
 6. **Screenshots and store images** - section 5.
 7. **Listing text, privacy policy and terms of use** - [references/store-listing.md](references/store-listing.md). Section 5a covers checking for existing pages and letting the developer choose Firebase auto-upload.
 8. **Declarations** - data safety / App Privacy, content rating, target audience, ads, export compliance, from code and runtime evidence.
-9. **Upload, fill, save, submit** - within the scope in section 6, re-reading after every save.
+9. **Upload, fill, save, submit** - within the scope in section 6, re-reading after every save. On Google Play, first fill the **Main store listing** completely ([references/google-play.md § 4a](references/google-play.md)): run `scripts/check-listing.mjs`, then fill App name, Short description, Full description, App icon, Feature graphic and Phone screenshots. Save, reload, and confirm every field is filled before moving on. Never report the listing done while any required field is empty.
 10. **Report** - section 7.
 
 ## 4. App icon
