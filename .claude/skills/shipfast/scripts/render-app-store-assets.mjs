@@ -9,8 +9,11 @@ import sharp from 'sharp';
 // screenshots plus Product Page Header / Search Results creative. Never signs in
 // or uploads anything to App Store Connect.
 
-// Apple accepts these portrait iPhone screenshot sizes (6.9" first, then 6.5").
-export const IPHONE_SIZES = [[1320,2868],[1290,2796],[1260,2736],[1284,2778],[1242,2688]];
+// Apple accepts these portrait iPhone screenshot sizes (6.9" first, then 6.5", then 6.3"/6.1").
+// App Store Connect's REQUIRED iPhone slot is "iPhone with Dynamic Island (medium display)"
+// and rejects the 6.9" sizes there with "File dimensions are invalid": render 1206x2622 or
+// 1179x2556 for it. The 6.9" sizes go in the optional large-display slot.
+export const IPHONE_SIZES = [[1320,2868],[1290,2796],[1260,2736],[1284,2778],[1242,2688],[1206,2622],[1179,2556]];
 // App Store Connect > Creative assets specifications. Images must not contain alpha.
 export const CREATIVE = {
   header: {size:[3840,1646], ratio:'21:9'},

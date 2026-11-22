@@ -119,6 +119,7 @@ Publishing makes the operator name and email public. Get the summary confirmed b
 
 - Uploads, saves and review submission that the user's request covers continue within that scope; do not re-ask at every step.
 - Ask before: creating paid accounts or paying fees, expanding countries, replacing signing keys or certificates, reinstalling in a way that deletes app data, changing production data, or choosing a public release over a manual/staged one.
+- Ask the developer before confirming any dialog that attests or agrees on their behalf (App Privacy "Publish", terms, export compliance) and before entering contact details that were not given (phone, public email). Ask for these once, at the start of the console fill, with the price and countries ([references/app-store.md § 6a](references/app-store.md)).
 - Never guess credentials or data-handling facts. If unknown, ask or mark the item blocked.
 - Never put review passwords, tokens, keystores or certificate passwords in Git, state files, screenshots or logs. Pass secrets via stdin where possible and do not print accessibility trees after typing them.
 - Do not copy another app's questionnaire answers. Every declaration needs evidence from this app.

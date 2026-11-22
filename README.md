@@ -127,7 +127,7 @@ Every image starts from your release build on a real phone. You confirm each cap
 | Both | App icon (from agent-designed SVG) | iOS 1024×1024 (no alpha), Play 512×512 (≤ 1 MiB) |
 | Google Play | Phone screenshots | 1080×1920 |
 | Google Play | Feature graphic | 1024×500 |
-| App Store | iPhone screenshots | 1320×2868 default (also 1290×2796, 1260×2736, 1284×2778, 1242×2688) |
+| App Store | iPhone screenshots | 1206×2622 for the required (6.3") slot, also 1179×2556; 1320×2868 default for the optional 6.9" slot (also 1290×2796, 1260×2736, 1284×2778, 1242×2688) |
 | App Store | Product Page Header | 3840×1646 (21:9) |
 | App Store | Search Results | 1920×1280 – 3840×2560 (3:2) |
 | App Store | Universal (both placements) | 5244×2950 (16:9), with crop-guide previews |
