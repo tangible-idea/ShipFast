@@ -1,0 +1,16 @@
+{
+  "name": "shipfast",
+  "owner": {"name": "tangible-idea"},
+  "metadata": {"description": "Agent skill that ships mobile apps to Google Play and the App Store."},
+  "plugins": [
+    {
+      "name": "shipfast",
+      "source": "./",
+      "description": "Ship any mobile app (Flutter, React Native, Expo, native Android/iOS) to Google Play and the App Store: real-device screenshots, store images, listing text, privacy policy, review tracking.",
+      "version": "0.2.0",
+      "license": "MIT",
+      "keywords": ["google-play", "app-store", "mobile", "release", "flutter", "react-native", "screenshots", "privacy-policy"],
+      "skills": ["./.claude/skills/shipfast"]
+    }
+  ]
+}

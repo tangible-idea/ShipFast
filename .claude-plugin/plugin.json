@@ -1,0 +1,10 @@
+{
+  "name": "shipfast",
+  "version": "0.2.0",
+  "description": "Ship any mobile app to Google Play and the App Store: real-device screenshots, store images, listing text, privacy policy, review tracking.",
+  "author": {"name": "tangible-idea"},
+  "homepage": "https://github.com/tangible-idea/ShipFast",
+  "repository": "https://github.com/tangible-idea/ShipFast",
+  "license": "MIT",
+  "skills": ["./.claude/skills/shipfast"]
+}

@@ -42,6 +42,12 @@ Works with any host that reads Agent Skills, including Claude Code, Cursor, Code
 npx skills add tangible-idea/ShipFast --skill shipfast
 ```
 
+Or as a Claude Code plugin (Claude Code 2.1.275 or later):
+
+```bash
+/plugin install shipfast --marketplace tangible-idea/ShipFast
+```
+
 The renderers use `sharp`. Install it once inside the installed skill folder:
 
 ```bash
