@@ -10,7 +10,7 @@
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-555555?style=flat-square)](.claude/skills/shipfast/package.json)
 [![MIT license](https://img.shields.io/badge/license-MIT-555555?style=flat-square)](LICENSE)
 
-[Install](#install) · [How it works](#how-it-works) · [Store images](#how-store-images-are-made) · [Privacy policy](#how-the-privacy-policy-is-made) · [Tracking](#every-item-is-tracked) · [Commands](#commands)
+[Website](https://shipfast-skill.web.app) · [Install](#install) · [How it works](#how-it-works) · [Store images](#how-store-images-are-made) · [Privacy policy](#how-the-privacy-policy-is-made) · [Tracking](#every-item-is-tracked) · [Commands](#commands)
 
 <code>npx skills add tangible-idea/ShipFast --skill shipfast</code>
 

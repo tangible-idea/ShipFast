@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShipFast: ship mobile apps to Google Play and the App Store</title>
+<meta name="description" content="An agent skill that takes any mobile app from source to a Google Play and App Store submission. Real-device screenshots, every store image, evidence-based privacy policy. Works with Claude Code, Cursor, Codex and Gemini CLI.">
+<link rel="canonical" href="https://shipfast-skill.web.app/">
+<meta property="og:title" content="ShipFast: ship mobile apps to Google Play and the App Store">
+<meta property="og:description" content="Agent skill: real-device screenshots, every store image, privacy policy, review tracking. No mockups.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shipfast-skill.web.app/">
+<meta property="og:image" content="https://shipfast-skill.web.app/assets/store-images.png">
+<meta name="theme-color" content="#bf4520">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23bf4520'/%3E%3Cpath d='M9 22 22 9m0 0h-8m8 0v8' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"ShipFast","description":"Agent skill that ships mobile apps to Google Play and the App Store.","codeRepository":"https://github.com/tangible-idea/ShipFast","license":"https://opensource.org/licenses/MIT","programmingLanguage":"JavaScript","url":"https://shipfast-skill.web.app/"}</script>
+<style>
+:root{--bg:#fbf8f4;--fg:#1c1a18;--mute:#6b645d;--line:#e6dfd6;--card:#fff;--acc:#bf4520;--code:#1c1a18;--codefg:#f4efe8}
+@media (prefers-color-scheme:dark){:root{--bg:#161412;--fg:#f1ece5;--mute:#a39b92;--line:#2c2825;--card:#1e1b19;--acc:#e8683f;--code:#0e0d0c;--codefg:#f1ece5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}.logo b{color:var(--acc)}
+nav a{color:var(--mute);text-decoration:none;margin-left:20px;font-size:14px}nav a:hover{color:var(--fg)}
+.hero{padding:48px 0 24px;text-align:center}
+h1{font-size:clamp(32px,6vw,52px);line-height:1.1;letter-spacing:-.03em;margin:0 0 16px}
+h1 em{font-style:normal;color:var(--acc)}
+.sub{color:var(--mute);font-size:18px;max-width:640px;margin:0 auto 28px}
+pre{background:var(--code);color:var(--codefg);border-radius:10px;padding:16px;overflow-x:auto;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:12px 0;text-align:left}
+.cta{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:600;margin:4px}
+.cta.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.demo{width:100%;border-radius:12px;border:1px solid var(--line);margin-top:24px}
+section{padding:40px 0;border-top:1px solid var(--line)}
+h2{font-size:26px;letter-spacing:-.02em;margin:0 0 8px}
+p.lead{color:var(--mute);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h3{margin:0 0 4px;font-size:16px}.card p{margin:0;color:var(--mute);font-size:14px}
+img.fig{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);margin-top:16px}
+.dark{display:none}@media (prefers-color-scheme:dark){.light{display:none}.dark{display:block}}
+code{font:.9em ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);padding:1px 5px;border-radius:4px}
+pre code{background:none;border:0;padding:0}
+footer{padding:32px 0;border-top:1px solid var(--line);color:var(--mute);font-size:14px;text-align:center}
+footer a{color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">Ship<b>Fast</b></div>
+  <nav><a href="#install">Install</a><a href="#how">How it works</a><a href="https://github.com/tangible-idea/ShipFast">GitHub</a></nav>
+</header>
+
+<div class="hero">
+  <h1>Ship your mobile app to <em>Google Play</em> and the <em>App Store</em></h1>
+  <p class="sub">An agent skill that takes any mobile app from source to a store submission. Real-device screenshots, every store image, an evidence-based privacy policy. No mockups.</p>
+  <pre><code>npx skills add tangible-idea/ShipFast --skill shipfast</code></pre>
+  <a class="cta" href="#install">Install</a><a class="cta alt" href="https://github.com/tangible-idea/ShipFast">View on GitHub</a>
+  <img class="demo" src="assets/terminal-launch.gif" alt="A terminal types /shipfast launch Android app on Play Store, then prints each step from detecting the app to Launched on Google Play" width="900">
+</div>
+
+<section id="how">
+  <h2>Ask your agent in plain words</h2>
+  <p class="lead">Works with Flutter, Expo, React Native, Capacitor, native Android and native iOS.</p>
+  <div class="grid">
+    <div class="card"><h3>/shipfast launch Android app on Play Store</h3><p>Detect, signed build, real-device run, closed test, listing, review.</p></div>
+    <div class="card"><h3>/shipfast launch ios</h3><p>The same flow for App Store Connect.</p></div>
+    <div class="card"><h3>/shipfast images ios</h3><p>iPhone screenshots plus Product Page Header and Search Results images.</p></div>
+    <div class="card"><h3>/shipfast icon</h3><p>Three SVG concepts, then iOS 1024px and Play 512px icons.</p></div>
+    <div class="card"><h3>/shipfast resume</h3><p>Continue from what was saved in <code>.shipfast/</code>.</p></div>
+  </div>
+  <img class="fig light" src="assets/launch-flow.png" alt="Diagram of the launch flow from detection to public release" loading="lazy">
+  <img class="fig dark" src="assets/launch-flow-dark.png" alt="Diagram of the launch flow from detection to public release" loading="lazy">
+</section>
+
+<section>
+  <h2>Every store image, from your real build</h2>
+  <p class="lead">Play phone screenshots and feature graphic. iPhone screenshots, Product Page Header (21:9), Search Results (3:2) and universal 16:9 images. You confirm each capture before it is used.</p>
+  <img class="fig light" src="assets/store-images.png" alt="Store images rendered from real device captures" loading="lazy">
+  <img class="fig dark" src="assets/store-images-dark.png" alt="Store images rendered from real device captures" loading="lazy">
+</section>
+
+<section>
+  <h2>A privacy policy that matches your code</h2>
+  <p class="lead">Data and privacy declarations are filled from evidence in your app, never copied from another one. Missing privacy policy and terms pages can be generated and uploaded to Firebase Hosting.</p>
+  <img class="fig light" src="assets/privacy-policy.png" alt="Privacy policy generated from code evidence" loading="lazy">
+  <img class="fig dark" src="assets/privacy-policy-dark.png" alt="Privacy policy generated from code evidence" loading="lazy">
+</section>
+
+<section>
+  <h2>Every item is tracked</h2>
+  <p class="lead">Each step is recorded in <code>.shipfast/</code> in your app, from prepared to submitted, approved and public, so an interrupted release resumes where it stopped. It never asks for your password: you sign in to the console yourself.</p>
+  <img class="fig light" src="assets/item-states.png" alt="Item states from prepared to public" loading="lazy">
+  <img class="fig dark" src="assets/item-states-dark.png" alt="Item states from prepared to public" loading="lazy">
+</section>
+
+<section id="install">
+  <h2>Install</h2>
+  <p class="lead">Works with any host that reads Agent Skills, including Claude Code, Cursor, Codex and Gemini CLI.</p>
+  <pre><code>npx skills add tangible-idea/ShipFast --skill shipfast</code></pre>
+  <p class="lead">Or as a Claude Code plugin (Claude Code 2.1.275 or later):</p>
+  <pre><code>/plugin install shipfast --marketplace tangible-idea/ShipFast</code></pre>
+  <p class="lead">The renderers use <code>sharp</code>. Install it once inside the installed skill folder:</p>
+  <pre><code>npm install --prefix ~/.claude/skills/shipfast</code></pre>
+</section>
+
+<footer>
+  MIT license · <a href="https://github.com/tangible-idea/ShipFast">github.com/tangible-idea/ShipFast</a>
+</footer>
+</div>
+</body>
+</html>

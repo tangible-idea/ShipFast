@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://shipfast-skill.web.app/sitemap.xml
